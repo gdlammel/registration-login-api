@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { User, IUserProps } from "@/domain/entities/user";
+import { User, IUserProps } from "@/domain/entities";
 
 describe("Create user entity", () => {
 	it("should be able to create new user", () => {
