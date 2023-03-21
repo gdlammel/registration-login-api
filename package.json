@@ -1,7 +1,7 @@
 {
 	"name": "registration-login-api",
 	"version": "1.0.0",
-	"description": "This is a project to learn and improve user creation and login concepts.</p>",
+	"description": "This is a project to learn and improve user creation and login concepts.",
 	"main": "index.js",
 	"scripts": {
 		"test": "vitest"
