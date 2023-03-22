@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { User, IUserProps } from "@/domain/entities";
+import { User, IUserProps, UserDomainError } from "@/domain/entities";
 
 describe("Create user entity", () => {
 	it("should be able to create new user", () => {
@@ -22,9 +22,7 @@ describe("Create user entity", () => {
 			phoneNumber: 12345678,
 		};
 
-		expect(() => {
-			User.create(user);
-		}).toThrowError();
+		expect(User.create(user)).toBeInstanceOf(UserDomainError);
 	});
 
 	it("should not be able to create new user by passing an invalid phone number", () => {
@@ -36,8 +34,6 @@ describe("Create user entity", () => {
 			phoneNumber: 54385,
 		};
 
-		expect(() => {
-			User.create(user);
-		}).toThrowError();
+		expect(User.create(user)).toBeInstanceOf(UserDomainError);
 	});
 });
