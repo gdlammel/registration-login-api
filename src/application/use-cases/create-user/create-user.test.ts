@@ -4,7 +4,6 @@ import { InMemoryUserRepository } from "@/infra/repositories";
 import {
 	InMemoryGenerateIDProvider,
 	InMemoryHashPasswordProvider,
-	InMemoryTokenManager,
 } from "@/infra/providers";
 import {
 	CreateUserUseCase,
@@ -17,12 +16,10 @@ describe("Create user use case", () => {
 		const repo = new InMemoryUserRepository([]);
 		const idProvider = new InMemoryGenerateIDProvider();
 		const hashPasswordProvider = new InMemoryHashPasswordProvider();
-		const tokenManagerProvider = new InMemoryTokenManager();
 		const sut = new CreateUserUseCase(
 			repo,
 			idProvider,
-			hashPasswordProvider,
-			tokenManagerProvider
+			hashPasswordProvider
 		);
 		const sutInput: CreateUserInputDTO = {
 			name: "Teste",
@@ -30,9 +27,9 @@ describe("Create user use case", () => {
 			password: "123",
 			phoneNumber: 5412345678,
 		};
-		const token = await sut.execute(sutInput);
+		const success = await sut.execute(sutInput);
 		expect(repo.getTimesSaveCalled()).toBe(1);
-		expect(token).toBe("abcabcabc");
+		expect(success).toBeTruthy();
 	});
 
 	it("Should not be able to create new user with email already registered", async () => {
@@ -50,12 +47,10 @@ describe("Create user use case", () => {
 			const repo = new InMemoryUserRepository([userRegistered]);
 			const idProvider = new InMemoryGenerateIDProvider();
 			const hashPasswordProvider = new InMemoryHashPasswordProvider();
-			const tokenManagerProvider = new InMemoryTokenManager();
 			const sut = new CreateUserUseCase(
 				repo,
 				idProvider,
-				hashPasswordProvider,
-				tokenManagerProvider
+				hashPasswordProvider
 			);
 
 			const sutInput: CreateUserInputDTO = {
