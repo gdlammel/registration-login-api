@@ -6,9 +6,9 @@ export interface IUserProps {
 	phoneNumber: number;
 }
 
-class UserError extends Error {
+export class UserDomainError extends Error {
 	constructor() {
-		super("Failed while create new user");
+		super("Error creating new user");
 	}
 }
 
@@ -33,20 +33,15 @@ export class User {
 		this.props = { id, name, password, email, phoneNumber };
 	}
 
-	public static create(userProps: IUserProps): User {
-		try {
-			const isPhoneNumberValidated = User.validatePhoneNumber(
-				String(userProps.phoneNumber)
-			);
-			const isEmailValidated = this.validateEmail(userProps.email);
-
-			if (!isPhoneNumberValidated || !isEmailValidated) {
-				throw Error();
-			}
-			return new User(userProps);
-		} catch (error) {
-			throw new UserError();
+	public static create(userProps: IUserProps): User | UserDomainError {
+		const isPhoneNumberValidated = User.validatePhoneNumber(
+			String(userProps.phoneNumber)
+		);
+		const isEmailValidated = this.validateEmail(userProps.email);
+		if (!isPhoneNumberValidated || !isEmailValidated) {
+			return new UserDomainError();
 		}
+		return new User(userProps);
 	}
 
 	private static validatePhoneNumber(phoneNumber: string) {
