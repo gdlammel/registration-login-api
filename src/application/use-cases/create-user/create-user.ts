@@ -5,7 +5,6 @@ import {
 import { IUserRepository } from "@/application/contracts/repositories";
 import { UseCase } from "@/domain";
 import { UserDomainError, User } from "@/domain/entities";
-import { ITokenManagerProvider } from "@/application/contracts/providers";
 import {
 	EmailAlreadyRegisteredError,
 	InternalError,
@@ -23,7 +22,7 @@ export class CreateUserUseCase
 		UseCase<
 			CreateUserInputDTO,
 			Promise<
-				| string
+				| boolean
 				| EmailAlreadyRegisteredError
 				| UserDomainError
 				| InternalError
@@ -33,13 +32,12 @@ export class CreateUserUseCase
 	constructor(
 		private userRepository: IUserRepository,
 		private generateIDProvider: IGenerateIDProvider,
-		private hashPasswordProvider: IHashPasswordProvider,
-		private tokenManagerProvider: ITokenManagerProvider
+		private hashPasswordProvider: IHashPasswordProvider
 	) {}
 	async execute(
 		data: CreateUserInputDTO
 	): Promise<
-		string | EmailAlreadyRegisteredError | UserDomainError | InternalError
+		boolean | EmailAlreadyRegisteredError | UserDomainError | InternalError
 	> {
 		try {
 			const emailAlreadyRegistered =
@@ -62,11 +60,9 @@ export class CreateUserUseCase
 			if (createdUserOrError instanceof Error) {
 				return new UserDomainError();
 			}
-			const createdUserInRepo =
-				this.userRepository.save(createdUserOrError);
+			await this.userRepository.save(createdUserOrError);
 
-			const token = this.tokenManagerProvider.generate(createdUserInRepo);
-			return token;
+			return true;
 		} catch (error) {
 			return new InternalError();
 		}
