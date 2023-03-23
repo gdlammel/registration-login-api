@@ -14,13 +14,24 @@ export class UserDomainError extends Error {
 
 export class User {
 	private props: IUserProps;
+	get id() {
+		return this.props.id;
+	}
 
 	get name() {
 		return this.props.name;
 	}
 
+	get password() {
+		return this.props.password;
+	}
+
 	get email() {
 		return this.props.email;
+	}
+
+	get phoneNumber() {
+		return this.props.phoneNumber;
 	}
 
 	private constructor({
