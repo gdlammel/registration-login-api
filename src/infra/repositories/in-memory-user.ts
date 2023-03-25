@@ -20,7 +20,30 @@ export class InMemoryUserRepository implements IUserRepository {
 		}
 		return foundEmailUser;
 	}
-
+	async findUserByID(id: string): Promise<User | null> {
+		const foundIdUser = this.users.find((user) => user.id === id);
+		if (!foundIdUser) {
+			return null;
+		}
+		return foundIdUser;
+	}
+	async updatePassword(user: User, newPassword: string): Promise<boolean> {
+		const foundUser = this.users.find(
+			(systemUser) => systemUser.id === user.id
+		);
+		const updatedUser = User.create({
+			id: user.id,
+			name: user.name,
+			password: newPassword,
+			email: user.email,
+			phoneNumber: user.phoneNumber,
+		});
+		this.users = [updatedUser as User];
+		return true;
+	}
+	getUpdatedUser(): User[] {
+		return this.users;
+	}
 	getTimesSaveCalled(): number {
 		return this.timeSaveCalled;
 	}
