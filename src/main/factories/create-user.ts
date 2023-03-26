@@ -3,7 +3,7 @@ import { CreateUserController } from "@/infra/controllers";
 import {
 	InMemoryGenerateIDProvider,
 	InMemoryHashPasswordProvider,
-} from "@/infra/providers";
+} from "@/infra/providers/in-memory";
 import { InMemoryUserRepository } from "@/infra/repositories";
 
 const userRepository = new InMemoryUserRepository([]);

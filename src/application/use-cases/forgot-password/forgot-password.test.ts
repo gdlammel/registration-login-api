@@ -1,5 +1,8 @@
 import { IUserProps, User } from "@/domain/entities";
-import { InMemoryEmailProvider, InMemoryTokenManager } from "@/infra/providers";
+import {
+	InMemoryEmailProvider,
+	InMemoryTokenManager,
+} from "@/infra/providers/in-memory";
 import { InMemoryUserRepository } from "@/infra/repositories";
 import { describe, expect, it } from "vitest";
 import { EmailNotFoundError } from "@/application/use-cases/forgot-password/errors";

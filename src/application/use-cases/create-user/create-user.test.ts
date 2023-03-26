@@ -4,7 +4,7 @@ import { InMemoryUserRepository } from "@/infra/repositories";
 import {
 	InMemoryGenerateIDProvider,
 	InMemoryHashPasswordProvider,
-} from "@/infra/providers";
+} from "@/infra/providers/in-memory";
 import {
 	CreateUserUseCase,
 	CreateUserInputDTO,

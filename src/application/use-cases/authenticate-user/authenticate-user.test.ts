@@ -9,7 +9,7 @@ import {
 import {
 	InMemoryHashPasswordProvider,
 	InMemoryTokenManager,
-} from "@/infra/providers";
+} from "@/infra/providers/in-memory";
 
 describe("Authenticate user use case", () => {
 	it("Should be able to authenticate user with all correct informations", async () => {
