@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { IUserProps, User } from "@/domain/entities";
-import { InMemoryUserRepository } from "@/infra/repositories";
+import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import {
 	InMemoryGenerateIDProvider,
 	InMemoryHashPasswordProvider,

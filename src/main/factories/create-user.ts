@@ -4,7 +4,7 @@ import {
 	InMemoryGenerateIDProvider,
 	InMemoryHashPasswordProvider,
 } from "@/infra/providers/in-memory";
-import { InMemoryUserRepository } from "@/infra/repositories";
+import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 
 const userRepository = new InMemoryUserRepository([]);
 const generateIDProvider = new InMemoryGenerateIDProvider();

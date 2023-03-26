@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { InMemoryUserRepository } from "@/infra/repositories";
+import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { AuthenticateUserUseCase } from "@/application/use-cases/authenticate-user";
 import { IUserProps, User } from "@/domain/entities/user";
 import {

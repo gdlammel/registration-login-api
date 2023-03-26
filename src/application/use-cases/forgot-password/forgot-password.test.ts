@@ -3,7 +3,7 @@ import {
 	InMemoryEmailProvider,
 	InMemoryTokenManager,
 } from "@/infra/providers/in-memory";
-import { InMemoryUserRepository } from "@/infra/repositories";
+import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { describe, expect, it } from "vitest";
 import { EmailNotFoundError } from "@/application/use-cases/forgot-password/errors";
 import { ForgotPasswordUseCase } from "@/application/use-cases/forgot-password";
