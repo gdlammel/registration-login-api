@@ -5,10 +5,8 @@ import {
 import { IUserRepository } from "@/application/contracts/repositories";
 import { UseCase } from "@/domain";
 import { UserDomainError, User } from "@/domain/entities";
-import {
-	EmailAlreadyRegisteredError,
-	InternalError,
-} from "@/application/use-cases/create-user/errors";
+import { EmailAlreadyRegisteredError } from "@/application/use-cases/create-user/errors";
+import { InternalError } from "@/application/use-cases/common/errors";
 
 export interface CreateUserInputDTO {
 	name: string;
@@ -45,10 +43,11 @@ export class CreateUserUseCase
 			if (emailAlreadyRegistered) {
 				return new EmailAlreadyRegisteredError();
 			}
-			const [encryptedPassword, id] = await Promise.all([
-				this.hashPasswordProvider.hash(data.password),
-				this.generateIDProvider.generate(),
-			]);
+
+			const id = this.generateIDProvider.generate();
+			const encryptedPassword = await this.hashPasswordProvider.hash(
+				data.password
+			);
 
 			const createdUserOrError = User.create({
 				id,
@@ -60,9 +59,9 @@ export class CreateUserUseCase
 			if (createdUserOrError instanceof Error) {
 				return new UserDomainError();
 			}
-			await this.userRepository.save(createdUserOrError);
+			const result = await this.userRepository.save(createdUserOrError);
 
-			return true;
+			return result;
 		} catch (error) {
 			return new InternalError();
 		}

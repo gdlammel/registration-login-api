@@ -6,6 +6,7 @@ import { IUserRepository } from "@/application/contracts/repositories";
 import { UseCase } from "@/domain";
 import { User, UserDomainError } from "@/domain/entities";
 import { EmailNotFoundError } from "@/application/use-cases/forgot-password/errors";
+import { InternalError } from "@/application/use-cases/common/errors";
 
 export interface ForgotPasswordInputDTO {
 	email: string;
@@ -21,21 +22,29 @@ export class ForgotPasswordUseCase
 	) {}
 	async execute({
 		email,
-	}: ForgotPasswordInputDTO): Promise<boolean | EmailNotFoundError> {
-		const emailExists = await this.userRepository.findUserByEmail(email);
-		if (!emailExists) {
-			return new EmailNotFoundError();
-		}
-		const createdUserOrError = User.create(emailExists);
-		if (createdUserOrError instanceof Error) {
-			return new UserDomainError();
-		}
+	}: ForgotPasswordInputDTO): Promise<
+		boolean | EmailNotFoundError | InternalError
+	> {
+		try {
+			const emailExists = await this.userRepository.findUserByEmail(
+				email
+			);
+			if (!emailExists) {
+				return new EmailNotFoundError();
+			}
+			const createdUserOrError = User.create(emailExists);
+			if (createdUserOrError instanceof Error) {
+				return new UserDomainError();
+			}
 
-		const token = this.tokenManagerService.generate(createdUserOrError);
-		const result = await this.emailProvider.sendEmail(
-			createdUserOrError,
-			token
-		);
-		return result;
+			const token = this.tokenManagerService.generate(createdUserOrError);
+			const result = await this.emailProvider.sendEmail(
+				createdUserOrError,
+				token
+			);
+			return result;
+		} catch (error) {
+			return new InternalError();
+		}
 	}
 }

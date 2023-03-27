@@ -4,8 +4,9 @@ import {
 	ResetPasswordError,
 } from "@/application/use-cases/reset-password/errors";
 import { IUserRepository } from "@/application/contracts/repositories";
-import { UserNotFoundError } from "@/application/use-cases/authenticate-user/errors";
+import { UserNotFoundError } from "@/application/use-cases/common/errors";
 import { User, UserDomainError } from "@/domain/entities";
+import { InternalError } from "@/application/use-cases/common/errors";
 
 export interface ResetPasswordInputDTO {
 	id: string;
@@ -22,29 +23,34 @@ export class ResetPasswordUseCase
 				| UserNotFoundError
 				| UserDomainError
 				| ResetPasswordError
+				| InternalError
 			>
 		>
 {
 	constructor(private userRepository: IUserRepository) {}
 	async execute({ id, newPassword }: ResetPasswordInputDTO) {
-		if (!id || !newPassword) {
-			return new MissingInformationError();
+		try {
+			if (!id || !newPassword) {
+				return new MissingInformationError();
+			}
+			const userExists = await this.userRepository.findUserByID(id);
+			if (!userExists) {
+				return new UserNotFoundError();
+			}
+			const user = User.create(userExists);
+			if (user instanceof UserDomainError) {
+				return new UserDomainError();
+			}
+			const result = await this.userRepository.updatePassword(
+				user,
+				newPassword
+			);
+			if (!result) {
+				return new ResetPasswordError();
+			}
+			return result;
+		} catch (error) {
+			return new InternalError();
 		}
-		const userExists = await this.userRepository.findUserByID(id);
-		if (!userExists) {
-			return new UserNotFoundError();
-		}
-		const user = User.create(userExists);
-		if (user instanceof UserDomainError) {
-			return new UserDomainError();
-		}
-		const result = await this.userRepository.updatePassword(
-			user,
-			newPassword
-		);
-		if (!result) {
-			return new ResetPasswordError();
-		}
-		return result;
 	}
 }

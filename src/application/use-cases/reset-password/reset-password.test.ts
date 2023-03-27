@@ -4,7 +4,7 @@ import {
 	ResetPasswordInputDTO,
 } from "@/application/use-cases/reset-password";
 import { MissingInformationError } from "@/application/use-cases/reset-password/errors";
-import { UserNotFoundError } from "@/application/use-cases/authenticate-user/errors/user-not-found";
+import { UserNotFoundError } from "@/application/use-cases/common/errors/user-not-found";
 import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { IUserProps, User } from "@/domain/entities";
 
