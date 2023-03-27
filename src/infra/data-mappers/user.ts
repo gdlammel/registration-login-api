@@ -5,7 +5,7 @@ export interface userTable {
 	name: string;
 	password: string;
 	email: string;
-	phone_number: number;
+	phone_number: bigint;
 	created_at: Date;
 	updated_at: Date;
 }
@@ -17,7 +17,7 @@ export class UserMapper {
 			name: user.name,
 			password: user.password,
 			email: user.email,
-			phoneNumber: user.phone_number,
+			phoneNumber: Number(user.phone_number),
 		});
 
 		if (domainUser instanceof User) {
@@ -31,7 +31,7 @@ export class UserMapper {
 			name: user.name,
 			password: user.password,
 			email: user.email,
-			phone_number: user.phoneNumber,
+			phone_number: BigInt(user.phoneNumber),
 			created_at: new Date(),
 			updated_at: new Date(),
 		};
