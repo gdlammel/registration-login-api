@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { createUserController } from "@/main/factories";
+import { CreateUserControllerFactory } from "@/main/factories";
+
 const userRoutes = Router();
 
-userRoutes.post("/", createUserController.handle);
+const createUserController = CreateUserControllerFactory.create();
+userRoutes.post("/", createUserController.handle.bind(createUserController));
 
 export { userRoutes };
