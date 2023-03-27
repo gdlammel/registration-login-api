@@ -3,6 +3,6 @@ import { userRoutes } from "@/main/routes";
 
 const appRouter = Router();
 
-appRouter.use("/user", userRoutes);
+appRouter.use("/users", userRoutes);
 
 export { appRouter };
