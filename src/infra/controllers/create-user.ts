@@ -5,17 +5,10 @@ import { EmailAlreadyRegisteredError } from "@/application/use-cases/create-user
 import { InternalError } from "@/application/use-cases/common/errors";
 import { UserDomainError } from "@/domain/entities";
 
-interface HttpCreateUserParams {
-	name: string;
-	password: string;
-	email: string;
-	phoneNumber: number;
-}
 export class CreateUserController implements Controller {
 	constructor(private createUserUseCase: CreateUserUseCase) {}
 	async handle(request: Request, response: Response): Promise<any> {
-		const { name, password, email, phoneNumber }: HttpCreateUserParams =
-			request.body;
+		const { name, password, email, phoneNumber } = request.user;
 		const result = await this.createUserUseCase.execute({
 			name,
 			password,
