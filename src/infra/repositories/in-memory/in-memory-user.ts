@@ -9,9 +9,9 @@ export class InMemoryUserRepository implements IUserRepository {
 		this.users = users;
 		this.timeSaveCalled = 0;
 	}
-	async save(user: User): Promise<User> {
+	async save(user: User): Promise<boolean> {
 		this.timeSaveCalled++;
-		return user;
+		return true;
 	}
 	async findUserByEmail(email: string): Promise<User | null> {
 		const foundEmailUser = this.users.find((user) => user.email === email);
