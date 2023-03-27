@@ -1,25 +1,29 @@
 import { z, ZodError } from "zod";
 import { Request, Response, NextFunction } from "express";
-
-export interface HttpCreateUserParams {
-	name: string;
-	password: string;
-	email: string;
-	phoneNumber: number;
-}
+import { ResponseData } from "@/infra/controllers/common";
 
 const createUserInputSchema = z.object({
-	name: z.string().min(2, { message: "Must be 2 or more characters long" }),
-	password: z.string(),
-	email: z.string().email().nonempty(),
+	name: z
+		.string()
+		.nonempty({ message: "Name is required" })
+		.min(1, { message: "Must be 1 or more characters long" }),
+	password: z
+		.string()
+		.nonempty({ message: "Pasword is required" })
+		.min(8, { message: "Password must be at least 8 characters" }),
+	email: z
+		.string()
+		.email({ message: "Invalid format" })
+		.nonempty({ message: "Email is required" }),
 	phoneNumber: z.number(),
 });
 
-export type ValidatedUser = z.infer<typeof createUserInputSchema>;
+type CreatedUserInputData = z.input<typeof createUserInputSchema>;
+export type ValidatedUser = z.output<typeof createUserInputSchema>;
 
 export class validateCreateUserInput {
 	static validate(request: Request, response: Response, next: NextFunction) {
-		const { name, password, email, phoneNumber }: HttpCreateUserParams =
+		const { name, password, email, phoneNumber }: CreatedUserInputData =
 			request.body;
 		try {
 			const user = createUserInputSchema.parse({
@@ -32,9 +36,15 @@ export class validateCreateUserInput {
 			return next();
 		} catch (error) {
 			if (error instanceof ZodError) {
-				return response.status(400).json(error.issues[0].message);
+				const responseData = ResponseData.badRequest(
+					error.issues[0].message
+				);
+				return response
+					.status(responseData.statusCode)
+					.json(responseData);
 			}
-			return response.status(500).json("Internal error");
+			const responseData = ResponseData.internalError("Internal error");
+			return response.status(responseData.statusCode).json(responseData);
 		}
 	}
 }
