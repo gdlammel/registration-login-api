@@ -1,3 +1,3 @@
 export interface IGenerateIDProvider {
-	generate(): Promise<string>;
+	generate(): string;
 }
