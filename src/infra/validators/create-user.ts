@@ -19,7 +19,7 @@ const createUserInputSchema = z.object({
 });
 
 type CreatedUserInputData = z.input<typeof createUserInputSchema>;
-export type ValidatedUser = z.output<typeof createUserInputSchema>;
+export type CreatedUserOutputData = z.output<typeof createUserInputSchema>;
 
 export class validateCreateUserInput {
 	static validate(request: Request, response: Response, next: NextFunction) {
@@ -32,8 +32,8 @@ export class validateCreateUserInput {
 				email,
 				phoneNumber,
 			});
-			request.user = user;
-			return next();
+			request.body = user;
+			next();
 		} catch (error) {
 			if (error instanceof ZodError) {
 				const responseData = ResponseData.badRequest(
