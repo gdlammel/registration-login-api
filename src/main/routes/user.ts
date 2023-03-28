@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { CreateUserControllerFactory } from "@/main/factories";
+import { CreateUserFactory } from "@/main/factories";
 import { validateCreateUserInput } from "@/infra/validators";
 
 const userRoutes = Router();
 
-const createUserController = CreateUserControllerFactory.create();
+const createUserController = CreateUserFactory.create();
 userRoutes.post(
 	"/",
 	validateCreateUserInput.validate,

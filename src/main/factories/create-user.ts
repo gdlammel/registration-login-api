@@ -5,7 +5,7 @@ import {
 	UUIDGenerateIDProvider,
 } from "@/infra/providers";
 import { DBUserRepository } from "@/infra/repositories/db";
-export class CreateUserControllerFactory {
+export class CreateUserFactory {
 	static create() {
 		const userRepository = new DBUserRepository();
 		const generateIDProvider = new UUIDGenerateIDProvider();
