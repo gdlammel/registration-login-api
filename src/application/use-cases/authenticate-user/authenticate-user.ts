@@ -48,7 +48,7 @@ export class AuthenticateUserUseCase
 			if (!isPasswordMatch) {
 				return new UnmatchPasswordError();
 			}
-			const token = await this.tokenManagerProvider.generate(userExists);
+			const token = this.tokenManagerProvider.generate(userExists);
 
 			return token;
 		} catch (error) {
