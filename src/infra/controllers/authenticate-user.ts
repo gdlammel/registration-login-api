@@ -32,7 +32,7 @@ export class AuthenticateUserController implements Controller {
 			const responseData = ResponseData.internalError("Internal error");
 			return response.status(responseData.statusCode).json(responseData);
 		} else {
-			const responseData = ResponseData.created(result);
+			const responseData = ResponseData.ok(result);
 			return response.status(responseData.statusCode).json(responseData);
 		}
 	}

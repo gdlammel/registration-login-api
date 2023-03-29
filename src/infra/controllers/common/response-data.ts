@@ -25,4 +25,20 @@ export class ResponseData {
 
 		return responseJson;
 	}
+
+	static ok<T>(data: T) {
+		const responseJson = {
+			statusCode: 200,
+			value: data,
+		};
+		return responseJson;
+	}
+	static unauthorized<T>(data: T) {
+		const responseJson = {
+			statusCode: 401,
+			value: data,
+		};
+
+		return responseJson;
+	}
 }
