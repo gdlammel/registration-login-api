@@ -12,7 +12,4 @@ export class JwtTokenMangerProvider implements ITokenManagerProvider {
 
 		return token;
 	}
-	verify(token: string): Object {
-		return "Method not implemented";
-	}
 }
