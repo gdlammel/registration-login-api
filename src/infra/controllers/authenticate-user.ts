@@ -5,7 +5,7 @@ import {
 	UserNotFoundError,
 } from "@/application/use-cases/common/errors";
 import { Request, Response } from "express";
-import { AuthenticateUserOutputtData } from "@/infra/validators/authenticate-user";
+import { AuthenticateUserOutputData } from "@/infra/validators/authenticate-user";
 
 import { Controller, ResponseData } from "@/infra/controllers/common";
 
@@ -15,7 +15,7 @@ export class AuthenticateUserController implements Controller {
 		request: Request,
 		response: Response<any, Record<string, any>>
 	) {
-		const { email, password }: AuthenticateUserOutputtData = request.body;
+		const { email, password }: AuthenticateUserOutputData = request.body;
 		const result = await this.authenticateUserUseCase.execute({
 			email,
 			password,

@@ -14,7 +14,7 @@ const authenticateUserSchema = z.object({
 });
 
 type AuthenticateUserInputData = z.input<typeof authenticateUserSchema>;
-export type AuthenticateUserOutputtData = z.output<
+export type AuthenticateUserOutputData = z.output<
 	typeof authenticateUserSchema
 >;
 
