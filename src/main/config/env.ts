@@ -9,4 +9,7 @@ export const env = {
 	emailUser: process.env.EMAIL_USER as string,
 	emailPassword: process.env.EMAIL_PASSWORD as string,
 	email: process.env.EMAIL,
+	forgotPasswordSecret: process.env.JWT_FORGOT_PASSWORD_SECRET as string,
+	forgotPasswordExpiresIn: process.env
+		.JWT_FORGOT_PASSWORD_EXPIRES_IN as string,
 };
