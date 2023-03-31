@@ -10,6 +10,11 @@ import {
 	validateForgotPasswordInput,
 } from "@/infra/validators";
 import { EnsureAuthenticationMiddleware } from "@/infra/middlewares";
+import { env } from "@/main/config";
+
+const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
+	process.env.JWT_FORGOT_PASSWORD_SECRET as string
+);
 
 const userRoutes = Router();
 
@@ -31,7 +36,7 @@ userRoutes.post(
 
 userRoutes.patch(
 	"/reset-password",
-	EnsureAuthenticationMiddleware.verify,
+	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
 	validateResetPasswordInput.validate,
 	resetPasswordController.handle.bind(resetPasswordController)
 );
