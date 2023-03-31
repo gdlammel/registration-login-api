@@ -12,4 +12,13 @@ export class JwtTokenMangerProvider implements ITokenManagerProvider {
 
 		return token;
 	}
+
+	generateForgotPassword(data: User): string {
+		const token = sign({ id: data.id }, env.forgotPasswordSecret, {
+			subject: data.id,
+			expiresIn: env.forgotPasswordExpiresIn,
+		});
+
+		return token;
+	}
 }

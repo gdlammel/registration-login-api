@@ -7,4 +7,7 @@ export class InMemoryTokenManager implements ITokenManagerProvider {
 	verify(token: string): Object {
 		throw new Error("Method not implemented.");
 	}
+	generateForgotPassword(data: Object): string {
+		throw new Error("Method not implemented.");
+	}
 }
