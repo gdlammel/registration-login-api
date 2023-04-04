@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { CreateUserUseCase } from "@/application/use-cases/create-user";
-import { Controller, ResponseData } from "@/infra/controllers/common";
+import { Controller } from "@/infra/controllers/common";
 import { EmailAlreadyRegisteredError } from "@/application/use-cases/create-user/errors";
 import { InternalError } from "@/application/use-cases/common/errors";
 import { UserDomainError } from "@/domain/entities";
 import { CreatedUserOutputData } from "@/infra/validators";
+import { HttpResponseFormatter } from "@/infra/common";
 
 export class CreateUserController implements Controller {
 	constructor(private createUserUseCase: CreateUserUseCase) {}
@@ -23,15 +24,16 @@ export class CreateUserController implements Controller {
 			result instanceof EmailAlreadyRegisteredError ||
 			result instanceof UserDomainError
 		) {
-			const responseData = ResponseData.badRequest(
+			const responseData = HttpResponseFormatter.badRequest(
 				"Error creating new user"
 			);
 			return response.status(responseData.statusCode).json(responseData);
 		} else if (result instanceof InternalError) {
-			const responseData = ResponseData.internalError("Internal error");
+			const responseData =
+				HttpResponseFormatter.internalError("Internal error");
 			return response.status(responseData.statusCode).json(responseData);
 		} else {
-			const responseData = ResponseData.created(
+			const responseData = HttpResponseFormatter.created(
 				"User created with success!"
 			);
 			return response.status(responseData.statusCode).json(responseData);

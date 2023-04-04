@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ResponseData } from "../controllers/common";
+import { HttpResponseFormatter } from "@/infra/common";
 import { verify } from "jsonwebtoken";
 
 interface IPayload {
@@ -11,7 +11,8 @@ export class EnsureAuthenticationMiddleware {
 	public verify(request: Request, response: Response, next: NextFunction) {
 		const authToken = request.headers.authorization;
 		if (!authToken) {
-			const responseData = ResponseData.unauthorized("Invalid Token");
+			const responseData =
+				HttpResponseFormatter.unauthorized("Invalid Token");
 			return response.status(responseData.statusCode).json(responseData);
 		}
 
@@ -23,7 +24,8 @@ export class EnsureAuthenticationMiddleware {
 			request.body = body;
 			return next();
 		} catch (error) {
-			const responseData = ResponseData.unauthorized("Unauthorized");
+			const responseData =
+				HttpResponseFormatter.unauthorized("Unauthorized");
 			return response.status(responseData.statusCode).json(responseData);
 		}
 	}

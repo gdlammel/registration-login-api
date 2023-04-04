@@ -6,8 +6,9 @@ import {
 } from "@/application/use-cases/common/errors";
 import { Request, Response } from "express";
 import { AuthenticateUserOutputData } from "@/infra/validators/authenticate-user";
+import { HttpResponseFormatter } from "@/infra/common";
 
-import { Controller, ResponseData } from "@/infra/controllers/common";
+import { Controller } from "@/infra/controllers/common";
 
 export class AuthenticateUserController implements Controller {
 	constructor(private authenticateUserUseCase: AuthenticateUserUseCase) {}
@@ -24,15 +25,16 @@ export class AuthenticateUserController implements Controller {
 			result instanceof UserNotFoundError ||
 			result instanceof UnmatchPasswordError
 		) {
-			const responseData = ResponseData.badRequest(
+			const responseData = HttpResponseFormatter.badRequest(
 				"Error authenticating user"
 			);
 			return response.status(responseData.statusCode).json(responseData);
 		} else if (result instanceof InternalError) {
-			const responseData = ResponseData.internalError("Internal error");
+			const responseData =
+				HttpResponseFormatter.internalError("Internal error");
 			return response.status(responseData.statusCode).json(responseData);
 		} else {
-			const responseData = ResponseData.ok(result);
+			const responseData = HttpResponseFormatter.ok(result);
 			return response.status(responseData.statusCode).json(responseData);
 		}
 	}

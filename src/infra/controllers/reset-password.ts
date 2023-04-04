@@ -4,7 +4,8 @@ import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { ResetPasswordOutputData } from "@/infra/validators";
-import { Controller, ResponseData } from "./common";
+import { Controller } from "./common";
+import { HttpResponseFormatter } from "@/infra/common";
 
 export class ResetPasswordController implements Controller {
 	constructor(private resetPasswordUseCase: ResetPasswordUseCase) {}
@@ -25,15 +26,16 @@ export class ResetPasswordController implements Controller {
 		});
 
 		if (result === true) {
-			const responseData = ResponseData.ok(
+			const responseData = HttpResponseFormatter.ok(
 				"Password changed successfully"
 			);
 			return response.status(responseData.statusCode).json(responseData);
 		} else if (result instanceof InternalError) {
-			const responseData = ResponseData.internalError("Internal error");
+			const responseData =
+				HttpResponseFormatter.internalError("Internal error");
 			return response.status(responseData.statusCode).json(responseData);
 		} else {
-			const responseData = ResponseData.badRequest(
+			const responseData = HttpResponseFormatter.badRequest(
 				"Error changing password"
 			);
 			return response.status(responseData.statusCode).json(responseData);

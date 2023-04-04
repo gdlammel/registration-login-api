@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
-import { ResponseData } from "@/infra/controllers/common";
+import { HttpResponseFormatter } from "@/infra/common";
 
 const resetPasswordInputSchema = z.object({
 	id: z.string().nonempty({ message: "Id is required" }),
@@ -24,14 +24,15 @@ export class validateResetPasswordInput {
 			return next();
 		} catch (error) {
 			if (error instanceof ZodError) {
-				const responseData = ResponseData.badRequest(
+				const responseData = HttpResponseFormatter.badRequest(
 					error.issues[0].message
 				);
 				return response
 					.status(responseData.statusCode)
 					.json(responseData);
 			}
-			const responseData = ResponseData.internalError("Internal error");
+			const responseData =
+				HttpResponseFormatter.internalError("Internal error");
 			return response.status(responseData.statusCode).json(responseData);
 		}
 	}
