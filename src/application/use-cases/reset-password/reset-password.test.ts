@@ -7,6 +7,7 @@ import { MissingInformationError } from "@/application/use-cases/reset-password/
 import { UserNotFoundError } from "@/application/use-cases/common/errors/user-not-found";
 import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { IUserProps, User } from "@/domain/entities";
+import { InMemoryHashPasswordProvider } from "@/infra/providers/in-memory";
 
 describe("Reset password use case", () => {
 	it("Should be able to return success message when passing all correct data", async () => {
@@ -25,7 +26,8 @@ describe("Reset password use case", () => {
 				newPassword: "new_password",
 			};
 			const repo = new InMemoryUserRepository([userRegistered]);
-			const sut = new ResetPasswordUseCase(repo);
+			const hashPasswordProvider = new InMemoryHashPasswordProvider();
+			const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
 			const response = await sut.execute(inputData);
 			expect(response).toBe(true);
 		}
@@ -35,7 +37,8 @@ describe("Reset password use case", () => {
 			newPassword: "new_password",
 		};
 		const repo = new InMemoryUserRepository([]);
-		const sut = new ResetPasswordUseCase(repo);
+		const hashPasswordProvider = new InMemoryHashPasswordProvider();
+		const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
 		const response = await sut.execute(inputData as ResetPasswordInputDTO);
 		expect(response).toBeInstanceOf(MissingInformationError);
 	});
@@ -45,7 +48,8 @@ describe("Reset password use case", () => {
 			newPassword: "new_password",
 		};
 		const repo = new InMemoryUserRepository([]);
-		const sut = new ResetPasswordUseCase(repo);
+		const hashPasswordProvider = new InMemoryHashPasswordProvider();
+		const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
 		const response = await sut.execute(inputData);
 		expect(response).toBeInstanceOf(UserNotFoundError);
 	});
@@ -65,7 +69,8 @@ describe("Reset password use case", () => {
 				newPassword: "new_password",
 			};
 			const repo = new InMemoryUserRepository([userRegistered]);
-			const sut = new ResetPasswordUseCase(repo);
+			const hashPasswordProvider = new InMemoryHashPasswordProvider();
+			const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
 			const response = await sut.execute(inputData);
 			expect(response).toBe(true);
 			expect(repo.getUpdatedUser()[0].id).toEqual(inputData.id);
