@@ -3,9 +3,9 @@ import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { AuthenticateUserUseCase } from "@/application/use-cases/authenticate-user";
 import { IUserProps, User } from "@/domain/entities/user";
 import {
-	UnmatchPasswordError,
-	UserNotFoundError,
+	UnmatchPasswordError
 } from "@/application/use-cases/authenticate-user/errors";
+import {UserNotFoundError} from "@/application/use-cases/common/errors"
 import {
 	InMemoryHashPasswordProvider,
 	InMemoryTokenManager,
