@@ -1,44 +1,35 @@
-export class ResponseData {
+export class HttpResponseFormatter<T> {
 	static badRequest<T>(data: T) {
-		const responseJson = {
+		return {
 			statusCode: 400,
 			value: data,
 		};
-
-		return responseJson;
 	}
 
 	static internalError<T>(data: T) {
-		const responseJson = {
+		return {
 			statusCode: 500,
 			value: data,
 		};
-
-		return responseJson;
 	}
 
 	static created<T>(data: T) {
-		const responseJson = {
+		return {
 			statusCode: 201,
 			value: data,
 		};
-
-		return responseJson;
 	}
 
 	static ok<T>(data: T) {
-		const responseJson = {
+		return {
 			statusCode: 200,
 			value: data,
 		};
-		return responseJson;
 	}
 	static unauthorized<T>(data: T) {
-		const responseJson = {
+		return {
 			statusCode: 401,
 			value: data,
 		};
-
-		return responseJson;
 	}
 }
