@@ -42,7 +42,7 @@ export class ResetPasswordUseCase
 				return new UserNotFoundError();
 			}
 			const hashedPassword = await this.hashPasswordProvider.hash(
-				userExists.password
+				newPassword
 			);
 
 			const user = User.create({
