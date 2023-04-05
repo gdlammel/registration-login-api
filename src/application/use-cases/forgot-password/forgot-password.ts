@@ -37,7 +37,10 @@ export class ForgotPasswordUseCase
 				return new UserDomainError();
 			}
 
-			const token = this.tokenManagerService.generate(createdUserOrError);
+			const token =
+				this.tokenManagerService.generateForgotPassword(
+					createdUserOrError
+				);
 			const result = await this.emailProvider.sendEmail(
 				createdUserOrError,
 				token
@@ -48,3 +51,4 @@ export class ForgotPasswordUseCase
 		}
 	}
 }
+
