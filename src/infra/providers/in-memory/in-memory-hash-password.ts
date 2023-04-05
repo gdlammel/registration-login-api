@@ -2,7 +2,7 @@ import { IHashPasswordProvider } from "@/application/contracts/providers";
 
 export class InMemoryHashPasswordProvider implements IHashPasswordProvider {
 	async hash(password: string): Promise<string> {
-		return "abc";
+		return password;
 	}
 	async compare(
 		inputPassword: string,
