@@ -1,12 +1,12 @@
-import { IUserRepository } from "@/application/contracts/repositories";
+import { IUserRepository } from "@/adapters/repositories";
 import { User } from "@/domain/entities";
 import { UserMapper } from "@/infra/data-mappers";
-import prisma from "@/infra/prisma/prisma-client";
+import { Client } from "@/infra/prisma";
 
-export class DBUserRepository implements IUserRepository {
+export class PrismaUserRepository implements IUserRepository {
 	async findUserByEmail(email: string): Promise<User | null> {
 		try {
-			const foundUser = await prisma.user.findUnique({
+			const foundUser = await Client.user.findUnique({
 				where: {
 					email,
 				},
@@ -23,7 +23,7 @@ export class DBUserRepository implements IUserRepository {
 
 	async findUserByID(id: string): Promise<User | null> {
 		try {
-			const foundUser = await prisma.user.findUnique({
+			const foundUser = await Client.user.findUnique({
 				where: {
 					id,
 				},
@@ -41,7 +41,7 @@ export class DBUserRepository implements IUserRepository {
 	async save(user: User): Promise<boolean> {
 		const userToPersistence = UserMapper.toPersistence(user);
 		try {
-			await prisma.user.create({
+			await Client.user.create({
 				data: userToPersistence,
 			});
 			return true;
@@ -51,7 +51,7 @@ export class DBUserRepository implements IUserRepository {
 	}
 	async updatePassword(user: User, newPassword: string): Promise<boolean> {
 		try {
-			await prisma.user.update({
+			await Client.user.update({
 				where: {
 					id: user.id,
 				},
