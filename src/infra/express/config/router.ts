@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { sessionRoutes, userRoutes } from "@/main/routes";
+
+import { sessionRoutes, userRoutes } from "@/infra/express/routes";
 
 const appRouter = Router();
 

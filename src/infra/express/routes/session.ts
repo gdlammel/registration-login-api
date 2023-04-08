@@ -1,6 +1,6 @@
-import { validateAuthenticateUserInput } from "@/infra/validators";
+import { validateAuthenticateUserInput } from "@/infra/middlewares/validators";
 import { Router } from "express";
-import { AuthenticateUserFactory } from "@/main/factories";
+import { AuthenticateUserFactory } from "@/infra/factories";
 
 const sessionRoutes = Router();
 
@@ -10,6 +10,6 @@ sessionRoutes.post(
 	"/login",
 	validateAuthenticateUserInput.validate,
 	authenticateUserController.handle.bind(authenticateUserController)
-);
+	);
 
 export { sessionRoutes };
