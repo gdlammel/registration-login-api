@@ -3,19 +3,19 @@ import {Controller} from "@/adapters/controllers/common"
 import { EmailAlreadyRegisteredError } from "@/application/create-user/errors";
 import { InternalError } from "@/application/common/errors";
 import { UserDomainError } from "@/domain/entities";
-import { HttpPresenter, IHttpResponse } from "@/adapters/presenters";
+import { HttpPresenter, HttpResponse } from "@/adapters/presenters";
 
-interface RequestDTO {
+export interface CreateUserRequestDTO {
 		name: string;
 		password: string;
 		email: string;
 		phoneNumber: number
 }
-export class CreateUserController implements Controller<RequestDTO, IHttpResponse<string>> {
-	constructor(private createUserUseCase: CreateUserInteractor) {}
-	async handle({name, password, email, phoneNumber}: RequestDTO): Promise<IHttpResponse<string>>{
+export class CreateUserController implements Controller<CreateUserRequestDTO, HttpResponse<string>> {
+	constructor(private createUserInteractor: CreateUserInteractor) {}
+	async handle({name, password, email, phoneNumber}: CreateUserRequestDTO): Promise<HttpResponse<string>>{
 
-		const result = await this.createUserUseCase.execute({
+		const result = await this.createUserInteractor.execute({
 			name,
 			password,
 			email,
