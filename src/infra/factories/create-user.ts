@@ -9,9 +9,9 @@ import { PrismaUserRepository } from "@/infra/repositories/prisma";
 export class CreateUserFactory {
 	static create() {
 		const userRepository = new PrismaUserRepository();
-		const generateIDProvider = new UuidIdService();
-		const hashPasswordProvider = new BcryptHashService();
-		const createUserGateway = new CreateUserGateway(userRepository, generateIDProvider, hashPasswordProvider);
+		const IdService = new UuidIdService();
+		const hashService = new BcryptHashService();
+		const createUserGateway = new CreateUserGateway(userRepository, IdService, hashService);
 		const createUserInteractor = new CreateUserInteractor(createUserGateway);
 		return new CreateUserController(createUserInteractor);
 	}
