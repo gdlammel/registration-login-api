@@ -1,15 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
-import { AuthenticateUserUseCase } from "@/application/use-cases/authenticate-user";
+import { AuthenticateUserUseCase } from "@/application/authenticate-user";
 import { IUserProps, User } from "@/domain/entities/user";
 import {
 	UnmatchPasswordError
-} from "@/application/use-cases/authenticate-user/errors";
-import {UserNotFoundError} from "@/application/use-cases/common/errors"
+} from "@/application/authenticate-user/errors";
+import {UserNotFoundError} from "@/application/common/errors"
 import {
-	InMemoryHashPasswordProvider,
-	InMemoryTokenManager,
-} from "@/infra/providers/in-memory";
+	InMemoryHashService,
+	InMemoryTokenService,
+} from "@/infra/services/in-memory";
+import {AuthenticateUserGateway} from "@/adapters/gateways"
 
 describe("Authenticate user use case", () => {
 	it("Should be able to authenticate user with all correct informations", async () => {
@@ -24,14 +25,11 @@ describe("Authenticate user use case", () => {
 		const userRegistered = User.create(userRegisteredInfos);
 
 		if (userRegistered instanceof User) {
-			const repo = new InMemoryUserRepository([userRegistered]);
-			const hashPasswordProvider = new InMemoryHashPasswordProvider();
-			const tokenManagerProvider = new InMemoryTokenManager();
-			const sut = new AuthenticateUserUseCase(
-				repo,
-				hashPasswordProvider,
-				tokenManagerProvider
-			);
+			const repository = new InMemoryUserRepository([userRegistered]);
+			const hashService = new InMemoryHashService();
+			const tokenService = new InMemoryTokenService();
+			const gateway = new AuthenticateUserGateway(repository, hashService, tokenService)
+			const sut = new AuthenticateUserUseCase(gateway);
 			const result = await sut.execute({
 				email: "teste@teste.com",
 				password: "123",
@@ -53,14 +51,11 @@ describe("Authenticate user use case", () => {
 		const userRegistered = User.create(userRegisteredInfos);
 
 		if (userRegistered instanceof User) {
-			const repo = new InMemoryUserRepository([userRegistered]);
-			const hashPasswordProvider = new InMemoryHashPasswordProvider();
-			const tokenManagerProvider = new InMemoryTokenManager();
-			const sut = new AuthenticateUserUseCase(
-				repo,
-				hashPasswordProvider,
-				tokenManagerProvider
-			);
+			const repository = new InMemoryUserRepository([userRegistered]);
+			const hashService = new InMemoryHashService();
+			const tokenService = new InMemoryTokenService();
+			const gateway = new AuthenticateUserGateway(repository, hashService, tokenService)
+			const sut = new AuthenticateUserUseCase(gateway);
 			const result = await sut.execute({
 				email: "teste45@teste.com",
 				password: "123",
@@ -81,14 +76,11 @@ describe("Authenticate user use case", () => {
 		const userRegistered = User.create(userRegisteredInfos);
 
 		if (userRegistered instanceof User) {
-			const repo = new InMemoryUserRepository([userRegistered]);
-			const hashPasswordProvider = new InMemoryHashPasswordProvider();
-			const tokenManagerProvider = new InMemoryTokenManager();
-			const sut = new AuthenticateUserUseCase(
-				repo,
-				hashPasswordProvider,
-				tokenManagerProvider
-			);
+			const repository = new InMemoryUserRepository([userRegistered]);
+			const hashService = new InMemoryHashService();
+			const tokenService = new InMemoryTokenService();
+			const gateway = new AuthenticateUserGateway(repository, hashService, tokenService)
+			const sut = new AuthenticateUserUseCase(gateway);
 			const result = await sut.execute({
 				email: "teste@teste.com",
 				password: "12345",
