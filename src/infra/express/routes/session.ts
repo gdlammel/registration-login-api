@@ -12,9 +12,13 @@ sessionRoutes.post(
 	"/login",
 	validateAuthenticateUserInput.validate,
 	async (request: Request, response: Response) => {
-		const data: AuthenticateUserRequestDTO = request.body
-		const httpResponse = await authenticateUserController.handle(data)
-		return response.status(httpResponse.statusCode).json(httpResponse.data)
-	});
+		const { email, password }: AuthenticateUserRequestDTO = request.body;
+		const httpResponse = await authenticateUserController.handle({
+			email,
+			password,
+		});
+		return response.status(httpResponse.statusCode).json(httpResponse.data);
+	}
+);
 
 export { sessionRoutes };

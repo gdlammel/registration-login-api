@@ -1,4 +1,4 @@
-import {Request, Response, Router} from "express";
+import { Request, Response, Router } from "express";
 
 import {
 	CreateUserFactory,
@@ -12,8 +12,14 @@ import {
 } from "@/infra/middlewares/validators";
 import { EnsureAuthenticationMiddleware } from "@/infra/middlewares/authentication";
 import { env } from "@/infra/env";
+import {
+	CreateUserRequestDTO,
+	ForgotPasswordRequestDTO, ResetPasswordRequestDTO,
+} from "@/adapters/controllers";
 
-const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(env.forgotPasswordSecret);
+const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
+	env.forgotPasswordSecret
+);
 
 const userRoutes = Router();
 
@@ -25,23 +31,37 @@ userRoutes.post(
 	"/",
 	validateCreateUserInput.validate,
 	async (request: Request, response: Response) => {
-			const data = request.body
-			const httpResponse = await createUserController.handle(data)
-			return response.status(httpResponse.statusCode).json(httpResponse.data)
+		const { name, password, email, phoneNumber }: CreateUserRequestDTO =
+			request.body;
+		const httpResponse = await createUserController.handle({
+			name,
+			password,
+			email,
+			phoneNumber,
+		});
+		return response.status(httpResponse.statusCode).json(httpResponse.data);
 	}
-	);
+);
 
 userRoutes.post(
 	"/forgot-password",
 	validateForgotPasswordInput.validate,
-	forgotPasswordController.handle.bind(forgotPasswordController)
-	);
+	async (request: Request, response: Response) => {
+		const { email }: ForgotPasswordRequestDTO = request.body;
+		const httpResponse = await forgotPasswordController.handle({ email });
+		return response.status(httpResponse.statusCode).json(httpResponse.data);
+	}
+);
 
 userRoutes.patch(
 	"/reset-password",
 	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
 	validateResetPasswordInput.validate,
-	resetPasswordController.handle.bind(resetPasswordController)
-	);
+	async (request: Request, response: Response) => {
+		const { id, newPassword}: ResetPasswordRequestDTO = request.body
+		const httpResponse = await resetPasswordController.handle({ id, newPassword });
+		return response.status(httpResponse.statusCode).json(httpResponse.data);
+	}
+);
 
 export { userRoutes };
