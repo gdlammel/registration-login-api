@@ -1,12 +1,14 @@
 import { Request, Response, Router } from "express";
 
 import { validateAuthenticateUserInput } from "@/infra/middlewares/validators";
-import { AuthenticateUserFactory } from "@/infra/factories";
+import { AuthenticateUserControllerFactory } from "@/infra/factories";
 import { AuthenticateUserRequestDTO } from "@/adapters/controllers";
 
 const sessionRoutes = Router();
 
-const authenticateUserController = AuthenticateUserFactory.create();
+const authenticateUserControllerFactory = new AuthenticateUserControllerFactory()
+
+const authenticateUserController = authenticateUserControllerFactory.create();
 
 sessionRoutes.post(
 	"/login",

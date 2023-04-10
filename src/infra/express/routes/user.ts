@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 
 import {
-	CreateUserFactory,
-	ForgotPasswordFactory,
-	ResetPasswordFactory,
+	CreateUserControllerFactory,
+	ForgotPasswordControllerFactory,
+	ResetPasswordControllerFactory,
 } from "@/infra/factories";
 import {
 	validateCreateUserInput,
@@ -23,9 +23,13 @@ const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 
 const userRoutes = Router();
 
-const createUserController = CreateUserFactory.create();
-const resetPasswordController = ResetPasswordFactory.create();
-const forgotPasswordController = ForgotPasswordFactory.create();
+const createUserControllerFactory = new CreateUserControllerFactory()
+const resetPasswordControllerFactory = new ResetPasswordControllerFactory()
+const forgotPasswordControllerFactory = new ForgotPasswordControllerFactory()
+
+const createUserController = createUserControllerFactory.create();
+const resetPasswordController = resetPasswordControllerFactory.create();
+const forgotPasswordController = forgotPasswordControllerFactory.create();
 
 userRoutes.post(
 	"/",
