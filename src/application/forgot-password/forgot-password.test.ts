@@ -1,12 +1,14 @@
-import { IUserProps, User } from "@/domain/entities";
-import {
-	InMemoryEmailProvider,
-	InMemoryTokenManager,
-} from "@/infra/providers/in-memory";
-import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { describe, expect, it } from "vitest";
-import { EmailNotFoundError } from "@/application/use-cases/forgot-password/errors";
-import { ForgotPasswordUseCase } from "@/application/use-cases/forgot-password";
+
+import { IUserProps, User } from "@/domain/entities";
+import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
+import { EmailNotFoundError } from "@/application/forgot-password/errors";
+import { ForgotPasswordInteractor } from "@/application/forgot-password";
+import {
+	InMemoryEmailService,
+	InMemoryTokenService,
+} from "@/infra/services/in-memory";
+import { ForgotPasswordGateway } from "@/adapters/gateways/forgot-password";
 
 describe("Forgot password use case", () => {
 	it("Must have a successful return", async () => {
@@ -20,28 +22,30 @@ describe("Forgot password use case", () => {
 
 		const userRegistered = User.create(userRegisteredInfos);
 		if (userRegistered instanceof User) {
-			const repo = new InMemoryUserRepository([userRegistered]);
-			const tokenManagerProvider = new InMemoryTokenManager();
-			const emailProvider = new InMemoryEmailProvider();
-			const sut = new ForgotPasswordUseCase(
-				repo,
-				tokenManagerProvider,
-				emailProvider
+			const repository = new InMemoryUserRepository([userRegistered]);
+			const tokenService = new InMemoryTokenService();
+			const emailService = new InMemoryEmailService();
+			const gateway = new ForgotPasswordGateway(
+				repository,
+				tokenService,
+				emailService
 			);
+			const sut = new ForgotPasswordInteractor(gateway);
 			const result = await sut.execute({ email: "teste@teste.com" });
 			expect(result).toBe(true);
 		}
 	});
 
 	it("Must have a email not found error return", async () => {
-		const repo = new InMemoryUserRepository([]);
-		const tokenManagerProvider = new InMemoryTokenManager();
-		const emailProvider = new InMemoryEmailProvider();
-		const sut = new ForgotPasswordUseCase(
-			repo,
-			tokenManagerProvider,
-			emailProvider
+		const repository = new InMemoryUserRepository([]);
+		const tokenService = new InMemoryTokenService();
+		const emailService = new InMemoryEmailService();
+		const gateway = new ForgotPasswordGateway(
+			repository,
+			tokenService,
+			emailService
 		);
+		const sut = new ForgotPasswordInteractor(gateway);
 		const result = await sut.execute({ email: "teste@teste.com" });
 		expect(result).toBeInstanceOf(EmailNotFoundError);
 	});
