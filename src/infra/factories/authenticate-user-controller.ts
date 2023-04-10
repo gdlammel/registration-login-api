@@ -3,9 +3,11 @@ import { AuthenticateUserGateway } from "@/adapters/gateways";
 import { AuthenticateUserController } from "@/adapters/controllers";
 import { BcryptHashService, JwtTokenService } from "@/infra/services";
 import { PrismaUserRepository } from "@/infra/repositories/prisma";
+import {ControllerFactory} from "@/infra/factories/common/controller-factory";
+import {Controller} from "@/adapters/controllers/common";
 
-export class AuthenticateUserFactory {
-	static create() {
+export class AuthenticateUserControllerFactory implements ControllerFactory{
+	create(): AuthenticateUserController {
 		const userRepository = new PrismaUserRepository();
 		const hashService = new BcryptHashService();
 		const tokenService = new JwtTokenService();
@@ -13,10 +15,10 @@ export class AuthenticateUserFactory {
 			userRepository,
 			hashService,
 			tokenService
-		);
+			);
 		const authenticateUserInteractor = new AuthenticateUserInteractor(
 			authenticateUserGateway
-		);
+			);
 		return new AuthenticateUserController(authenticateUserInteractor);
 	}
 }

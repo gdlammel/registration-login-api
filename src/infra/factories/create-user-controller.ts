@@ -6,8 +6,9 @@ import {
 	UuidIdService,
 } from "@/infra/services";
 import { PrismaUserRepository } from "@/infra/repositories/prisma";
-export class CreateUserFactory {
-	static create() {
+import {ControllerFactory} from "@/infra/factories/common/controller-factory";
+export class CreateUserControllerFactory implements ControllerFactory{
+	create(): CreateUserController {
 		const userRepository = new PrismaUserRepository();
 		const IdService = new UuidIdService();
 		const hashService = new BcryptHashService();
