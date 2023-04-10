@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest";
+
 import {
-	ResetPasswordUseCase,
+	ResetPasswordInteractor,
 	ResetPasswordInputDTO,
-} from "@/application/use-cases/reset-password";
-import { MissingInformationError } from "@/application/use-cases/reset-password/errors";
-import { UserNotFoundError } from "@/application/use-cases/common/errors/user-not-found";
+} from "@/application/reset-password";
+import { MissingInformationError } from "@/application/reset-password/errors";
+import { UserNotFoundError } from "@/application/common/errors";
 import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { IUserProps, User } from "@/domain/entities";
-import { InMemoryHashPasswordProvider } from "@/infra/providers/in-memory";
+import {ResetPasswordGateway} from "@/adapters/gateways"
+import { InMemoryHashService } from "@/infra/services/in-memory";
 
 describe("Reset password use case", () => {
 	it("Should be able to return success message when passing all correct data", async () => {
@@ -25,9 +27,10 @@ describe("Reset password use case", () => {
 				id: "123",
 				newPassword: "new_password",
 			};
-			const repo = new InMemoryUserRepository([userRegistered]);
-			const hashPasswordProvider = new InMemoryHashPasswordProvider();
-			const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
+			const repository = new InMemoryUserRepository([userRegistered]);
+			const hashService = new InMemoryHashService();
+			const gateway = new ResetPasswordGateway(repository, hashService)
+			const sut = new ResetPasswordInteractor(gateway);
 			const response = await sut.execute(inputData);
 			expect(response).toBe(true);
 		}
@@ -36,9 +39,10 @@ describe("Reset password use case", () => {
 		const inputData = {
 			newPassword: "new_password",
 		};
-		const repo = new InMemoryUserRepository([]);
-		const hashPasswordProvider = new InMemoryHashPasswordProvider();
-		const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
+		const repository = new InMemoryUserRepository([]);
+		const hashService = new InMemoryHashService();
+		const gateway = new ResetPasswordGateway(repository, hashService)
+		const sut = new ResetPasswordInteractor(gateway);
 		const response = await sut.execute(inputData as ResetPasswordInputDTO);
 		expect(response).toBeInstanceOf(MissingInformationError);
 	});
@@ -47,9 +51,10 @@ describe("Reset password use case", () => {
 			id: "123",
 			newPassword: "new_password",
 		};
-		const repo = new InMemoryUserRepository([]);
-		const hashPasswordProvider = new InMemoryHashPasswordProvider();
-		const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
+		const repository = new InMemoryUserRepository([]);
+		const hashService = new InMemoryHashService();
+		const gateway = new ResetPasswordGateway(repository, hashService)
+		const sut = new ResetPasswordInteractor(gateway);
 		const response = await sut.execute(inputData);
 		expect(response).toBeInstanceOf(UserNotFoundError);
 	});
@@ -68,13 +73,14 @@ describe("Reset password use case", () => {
 				id: "123",
 				newPassword: "new_password",
 			};
-			const repo = new InMemoryUserRepository([userRegistered]);
-			const hashPasswordProvider = new InMemoryHashPasswordProvider();
-			const sut = new ResetPasswordUseCase(repo, hashPasswordProvider);
+			const repository = new InMemoryUserRepository([userRegistered]);
+			const hashService = new InMemoryHashService();
+			const gateway = new ResetPasswordGateway(repository, hashService)
+			const sut = new ResetPasswordInteractor(gateway);
 			const response = await sut.execute(inputData);
 			expect(response).toBe(true);
-			expect(repo.getUpdatedUser()[0].id).toEqual(inputData.id);
-			expect(repo.getUpdatedUser()[0].password).toEqual(
+			expect(repository.getUpdatedUser()[0].id).toEqual(inputData.id);
+			expect(repository.getUpdatedUser()[0].password).toEqual(
 				inputData.newPassword
 			);
 		}
