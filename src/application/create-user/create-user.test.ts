@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { IUserProps, User } from "@/domain/entities";
 import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
-import {CreateUserGateway} from "@/adapters/gateways"
+import { CreateUserGateway } from "@/adapters/gateways";
 import {
 	InMemoryIdService,
 	InMemoryHashService,
@@ -18,7 +18,11 @@ describe("Create user use case", () => {
 		const repository = new InMemoryUserRepository([]);
 		const idService = new InMemoryIdService();
 		const hashService = new InMemoryHashService();
-		const gateway = new CreateUserGateway(repository, idService, hashService)
+		const gateway = new CreateUserGateway(
+			repository,
+			idService,
+			hashService
+		);
 		const sut = new CreateUserInteractor(gateway);
 		const sutInput: CreateUserInputDTO = {
 			name: "Teste",
@@ -46,7 +50,11 @@ describe("Create user use case", () => {
 			const repository = new InMemoryUserRepository([userRegistered]);
 			const idService = new InMemoryIdService();
 			const hashService = new InMemoryHashService();
-			const gateway = new CreateUserGateway(repository, idService, hashService)
+			const gateway = new CreateUserGateway(
+				repository,
+				idService,
+				hashService
+			);
 			const sut = new CreateUserInteractor(gateway);
 
 			const sutInput: CreateUserInputDTO = {
