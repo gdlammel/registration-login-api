@@ -1,12 +1,17 @@
 import { AuthenticateUserInteractor } from "@/application/authenticate-user";
 import { AuthenticateUserGateway } from "@/adapters/gateways";
-import { AuthenticateUserController } from "@/adapters/controllers";
+import {
+	AuthenticateUserController,
+	AuthenticateUserRequestDTO,
+} from "@/adapters/controllers";
 import { BcryptHashService, JwtTokenService } from "@/infra/services";
 import { PrismaUserRepository } from "@/infra/repositories/prisma";
 import { ControllerFactory } from "@/infra/factories/common";
+import { Controller } from "@/adapters/controllers/common";
+import { HttpResponse } from "@/adapters/presenters";
 
 export class AuthenticateUserControllerFactory implements ControllerFactory {
-	create(): AuthenticateUserController {
+	create(): Controller<AuthenticateUserRequestDTO, HttpResponse<string>> {
 		const userRepository = new PrismaUserRepository();
 		const hashService = new BcryptHashService();
 		const tokenService = new JwtTokenService();
