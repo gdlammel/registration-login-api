@@ -6,7 +6,8 @@ import { AuthenticateUserRequestDTO } from "@/adapters/controllers";
 
 const sessionRoutes = Router();
 
-const authenticateUserControllerFactory = new AuthenticateUserControllerFactory()
+const authenticateUserControllerFactory =
+	new AuthenticateUserControllerFactory();
 
 const authenticateUserController = authenticateUserControllerFactory.create();
 

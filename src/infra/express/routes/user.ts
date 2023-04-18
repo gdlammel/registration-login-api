@@ -14,7 +14,8 @@ import { EnsureAuthenticationMiddleware } from "@/infra/middlewares/authenticati
 import { env } from "@/infra/env";
 import {
 	CreateUserRequestDTO,
-	ForgotPasswordRequestDTO, ResetPasswordRequestDTO,
+	ForgotPasswordRequestDTO,
+	ResetPasswordRequestDTO,
 } from "@/adapters/controllers";
 
 const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
@@ -23,9 +24,9 @@ const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 
 const userRoutes = Router();
 
-const createUserControllerFactory = new CreateUserControllerFactory()
-const resetPasswordControllerFactory = new ResetPasswordControllerFactory()
-const forgotPasswordControllerFactory = new ForgotPasswordControllerFactory()
+const createUserControllerFactory = new CreateUserControllerFactory();
+const resetPasswordControllerFactory = new ResetPasswordControllerFactory();
+const forgotPasswordControllerFactory = new ForgotPasswordControllerFactory();
 
 const createUserController = createUserControllerFactory.create();
 const resetPasswordController = resetPasswordControllerFactory.create();
@@ -62,8 +63,11 @@ userRoutes.patch(
 	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
 	validateResetPasswordInput.validate,
 	async (request: Request, response: Response) => {
-		const { id, newPassword}: ResetPasswordRequestDTO = request.body
-		const httpResponse = await resetPasswordController.handle({ id, newPassword });
+		const { id, newPassword }: ResetPasswordRequestDTO = request.body;
+		const httpResponse = await resetPasswordController.handle({
+			id,
+			newPassword,
+		});
 		return response.status(httpResponse.statusCode).json(httpResponse.data);
 	}
 );
