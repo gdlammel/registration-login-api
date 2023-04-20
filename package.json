@@ -4,7 +4,7 @@
 	"description": "This is a project to learn and improve user creation and login concepts.",
 	"main": "index.js",
 	"scripts": {
-		"dev": "tsx watch ./src/infra/server.ts",
+		"dev": "tsx watch ./src/infra/express/server.ts",
 		"test": "vitest"
 	},
 	"keywords": [],
