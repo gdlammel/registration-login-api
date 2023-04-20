@@ -17,6 +17,9 @@ import {
 	ForgotPasswordRequestDTO,
 	ResetPasswordRequestDTO,
 } from "@/adapters/controllers";
+import { CreateUserHandler } from "@/infra/express/handlers/create-user";
+import { ForgotPasswordHandler } from "../handlers/forgot-password";
+import { ResetPasswordHandler } from "../handlers/reset-password";
 
 const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 	env.forgotPasswordSecret
@@ -32,44 +35,29 @@ const createUserController = createUserControllerFactory.create();
 const resetPasswordController = resetPasswordControllerFactory.create();
 const forgotPasswordController = forgotPasswordControllerFactory.create();
 
+const createUserHandler = new CreateUserHandler(createUserController);
+const forgotPasswordHandler = new ForgotPasswordHandler(
+	forgotPasswordController
+);
+const resetPasswordHandler = new ResetPasswordHandler(resetPasswordController);
+
 userRoutes.post(
 	"/",
 	validateCreateUserInput.validate,
-	async (request: Request, response: Response) => {
-		const { name, password, email, phoneNumber }: CreateUserRequestDTO =
-			request.body;
-		const httpResponse = await createUserController.handle({
-			name,
-			password,
-			email,
-			phoneNumber,
-		});
-		return response.status(httpResponse.statusCode).json(httpResponse.data);
-	}
+	createUserHandler.handle.bind(createUserHandler)
 );
 
 userRoutes.post(
 	"/forgot-password",
 	validateForgotPasswordInput.validate,
-	async (request: Request, response: Response) => {
-		const { email }: ForgotPasswordRequestDTO = request.body;
-		const httpResponse = await forgotPasswordController.handle({ email });
-		return response.status(httpResponse.statusCode).json(httpResponse.data);
-	}
+	forgotPasswordHandler.handle.bind(forgotPasswordHandler)
 );
 
 userRoutes.patch(
 	"/reset-password",
 	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
 	validateResetPasswordInput.validate,
-	async (request: Request, response: Response) => {
-		const { id, newPassword }: ResetPasswordRequestDTO = request.body;
-		const httpResponse = await resetPasswordController.handle({
-			id,
-			newPassword,
-		});
-		return response.status(httpResponse.statusCode).json(httpResponse.data);
-	}
+	resetPasswordHandler.handle.bind(resetPasswordHandler)
 );
 
 export { userRoutes };

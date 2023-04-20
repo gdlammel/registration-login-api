@@ -3,6 +3,7 @@ import { Request, Response, Router } from "express";
 import { validateAuthenticateUserInput } from "@/infra/middlewares/validators";
 import { AuthenticateUserControllerFactory } from "@/infra/factories";
 import { AuthenticateUserRequestDTO } from "@/adapters/controllers";
+import { AuthenticateUserHandler } from "../handlers/authenticate-user";
 
 const sessionRoutes = Router();
 
@@ -11,17 +12,14 @@ const authenticateUserControllerFactory =
 
 const authenticateUserController = authenticateUserControllerFactory.create();
 
+const authenticateUserHandler = new AuthenticateUserHandler(
+	authenticateUserController
+);
+
 sessionRoutes.post(
 	"/login",
 	validateAuthenticateUserInput.validate,
-	async (request: Request, response: Response) => {
-		const { email, password }: AuthenticateUserRequestDTO = request.body;
-		const httpResponse = await authenticateUserController.handle({
-			email,
-			password,
-		});
-		return response.status(httpResponse.statusCode).json(httpResponse.data);
-	}
+	authenticateUserHandler.handle.bind(authenticateUserHandler)
 );
 
 export { sessionRoutes };
