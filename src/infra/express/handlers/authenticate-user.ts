@@ -5,7 +5,7 @@ import { Controller } from "@/adapters/controllers/common";
 import { HttpResponse } from "@/adapters/presenters";
 import { ExpressHandler } from "@/infra/express/handlers/common";
 
-export class AuthenticateUserHandler implements ExpressHandler {
+export class AuthenticateUserExpressHandler implements ExpressHandler {
 	constructor(
 		private controller: Controller<
 			AuthenticateUserRequestDTO,

@@ -5,7 +5,7 @@ import { Controller } from "@/adapters/controllers/common";
 import { HttpResponse } from "@/adapters/presenters";
 import { ExpressHandler } from "@/infra/express/handlers/common";
 
-export class ForgotPasswordHandler implements ExpressHandler {
+export class ForgotPasswordExpressHandler implements ExpressHandler {
 	constructor(
 		private controller: Controller<
 			ForgotPasswordRequestDTO,

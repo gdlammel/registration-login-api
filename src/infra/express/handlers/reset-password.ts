@@ -5,7 +5,7 @@ import { Controller } from "@/adapters/controllers/common";
 import { HttpResponse } from "@/adapters/presenters";
 import { ExpressHandler } from "@/infra/express/handlers/common";
 
-export class ResetPasswordHandler implements ExpressHandler {
+export class ResetPasswordExpressHandler implements ExpressHandler {
 	constructor(
 		private controller: Controller<
 			ResetPasswordRequestDTO,
