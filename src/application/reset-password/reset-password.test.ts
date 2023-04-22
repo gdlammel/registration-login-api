@@ -8,10 +8,21 @@ import { MissingInformationError } from "@/application/reset-password/errors";
 import { UserNotFoundError } from "@/application/common/errors";
 import { InMemoryUserRepository } from "@/infra/repositories/in-memory";
 import { IUserProps, User } from "@/domain/entities";
-import {ResetPasswordGateway} from "@/adapters/gateways"
+import { ResetPasswordGateway } from "@/adapters/gateways";
 import { InMemoryHashService } from "@/infra/services/in-memory";
 
 describe("Reset password use case", () => {
+	type CreateSutReturn = [ResetPasswordInteractor, InMemoryUserRepository];
+
+	function createSut(userRegistered?: User): CreateSutReturn {
+		const repository = new InMemoryUserRepository(
+			userRegistered ? [userRegistered] : []
+		);
+		const hashService = new InMemoryHashService();
+		const gateway = new ResetPasswordGateway(repository, hashService);
+		return [new ResetPasswordInteractor(gateway), repository];
+	}
+
 	it("Should be able to return success message when passing all correct data", async () => {
 		const userRegisteredInfos: IUserProps = {
 			id: "123",
@@ -27,10 +38,7 @@ describe("Reset password use case", () => {
 				id: "123",
 				newPassword: "new_password",
 			};
-			const repository = new InMemoryUserRepository([userRegistered]);
-			const hashService = new InMemoryHashService();
-			const gateway = new ResetPasswordGateway(repository, hashService)
-			const sut = new ResetPasswordInteractor(gateway);
+			const [sut] = createSut(userRegistered);
 			const response = await sut.execute(inputData);
 			expect(response).toBe(true);
 		}
@@ -39,10 +47,7 @@ describe("Reset password use case", () => {
 		const inputData = {
 			newPassword: "new_password",
 		};
-		const repository = new InMemoryUserRepository([]);
-		const hashService = new InMemoryHashService();
-		const gateway = new ResetPasswordGateway(repository, hashService)
-		const sut = new ResetPasswordInteractor(gateway);
+		const [sut] = createSut();
 		const response = await sut.execute(inputData as ResetPasswordInputDTO);
 		expect(response).toBeInstanceOf(MissingInformationError);
 	});
@@ -51,10 +56,7 @@ describe("Reset password use case", () => {
 			id: "123",
 			newPassword: "new_password",
 		};
-		const repository = new InMemoryUserRepository([]);
-		const hashService = new InMemoryHashService();
-		const gateway = new ResetPasswordGateway(repository, hashService)
-		const sut = new ResetPasswordInteractor(gateway);
+		const [sut] = createSut();
 		const response = await sut.execute(inputData);
 		expect(response).toBeInstanceOf(UserNotFoundError);
 	});
@@ -73,10 +75,7 @@ describe("Reset password use case", () => {
 				id: "123",
 				newPassword: "new_password",
 			};
-			const repository = new InMemoryUserRepository([userRegistered]);
-			const hashService = new InMemoryHashService();
-			const gateway = new ResetPasswordGateway(repository, hashService)
-			const sut = new ResetPasswordInteractor(gateway);
+			const [sut, repository] = createSut(userRegistered);
 			const response = await sut.execute(inputData);
 			expect(response).toBe(true);
 			expect(repository.getUpdatedUser()[0].id).toEqual(inputData.id);

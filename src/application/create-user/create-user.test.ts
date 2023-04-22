@@ -14,8 +14,12 @@ import {
 import { EmailAlreadyRegisteredError } from "@/application/create-user/errors";
 
 describe("Create user use case", () => {
-	it("Should be able to create new user with all correct informations", async () => {
-		const repository = new InMemoryUserRepository([]);
+	type createSutReturn = [CreateUserInteractor, InMemoryUserRepository];
+
+	function createSut(userRegistered?: User): createSutReturn {
+		const repository = new InMemoryUserRepository(
+			userRegistered ? [userRegistered] : []
+		);
 		const idService = new InMemoryIdService();
 		const hashService = new InMemoryHashService();
 		const gateway = new CreateUserGateway(
@@ -23,7 +27,10 @@ describe("Create user use case", () => {
 			idService,
 			hashService
 		);
-		const sut = new CreateUserInteractor(gateway);
+		return [new CreateUserInteractor(gateway), repository];
+	}
+	it("Should be able to create new user with all correct informations", async () => {
+		const [sut, repository] = createSut();
 		const sutInput: CreateUserInputDTO = {
 			name: "Teste",
 			email: "teste@gmail.com",
@@ -47,15 +54,7 @@ describe("Create user use case", () => {
 		const userRegistered = User.create(userRegisteredInfos);
 
 		if (userRegistered instanceof User) {
-			const repository = new InMemoryUserRepository([userRegistered]);
-			const idService = new InMemoryIdService();
-			const hashService = new InMemoryHashService();
-			const gateway = new CreateUserGateway(
-				repository,
-				idService,
-				hashService
-			);
-			const sut = new CreateUserInteractor(gateway);
+			const [sut] = createSut(userRegistered);
 
 			const sutInput: CreateUserInputDTO = {
 				name: "teste2",

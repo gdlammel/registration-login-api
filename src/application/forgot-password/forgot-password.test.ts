@@ -11,6 +11,20 @@ import {
 import { ForgotPasswordGateway } from "@/adapters/gateways/forgot-password";
 
 describe("Forgot password use case", () => {
+	function createSut(userRegistered?: User) {
+		const repository = new InMemoryUserRepository(
+			userRegistered ? [userRegistered] : []
+		);
+		const tokenService = new InMemoryTokenService();
+		const emailService = new InMemoryEmailService();
+		const gateway = new ForgotPasswordGateway(
+			repository,
+			tokenService,
+			emailService
+		);
+		return new ForgotPasswordInteractor(gateway);
+	}
+
 	it("Must have a successful return", async () => {
 		const userRegisteredInfos: IUserProps = {
 			id: "1",
@@ -22,30 +36,14 @@ describe("Forgot password use case", () => {
 
 		const userRegistered = User.create(userRegisteredInfos);
 		if (userRegistered instanceof User) {
-			const repository = new InMemoryUserRepository([userRegistered]);
-			const tokenService = new InMemoryTokenService();
-			const emailService = new InMemoryEmailService();
-			const gateway = new ForgotPasswordGateway(
-				repository,
-				tokenService,
-				emailService
-			);
-			const sut = new ForgotPasswordInteractor(gateway);
+			const sut = createSut(userRegistered);
 			const result = await sut.execute({ email: "teste@teste.com" });
 			expect(result).toBe(true);
 		}
 	});
 
 	it("Must have a email not found error return", async () => {
-		const repository = new InMemoryUserRepository([]);
-		const tokenService = new InMemoryTokenService();
-		const emailService = new InMemoryEmailService();
-		const gateway = new ForgotPasswordGateway(
-			repository,
-			tokenService,
-			emailService
-		);
-		const sut = new ForgotPasswordInteractor(gateway);
+		const sut = createSut();
 		const result = await sut.execute({ email: "teste@teste.com" });
 		expect(result).toBeInstanceOf(EmailNotFoundError);
 	});
