@@ -3,8 +3,9 @@ import { Request, Response } from "express";
 import { AuthenticateUserRequestDTO } from "@/adapters/controllers";
 import { Controller } from "@/adapters/controllers/common";
 import { HttpResponse } from "@/adapters/presenters";
+import { ExpressHandler } from "@/infra/express/handlers/common";
 
-export class AuthenticateUserHandler {
+export class AuthenticateUserHandler implements ExpressHandler {
 	constructor(
 		private controller: Controller<
 			AuthenticateUserRequestDTO,

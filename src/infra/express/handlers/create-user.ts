@@ -1,9 +1,12 @@
+import { Request, Response } from "express";
+
 import { CreateUserRequestDTO } from "@/adapters/controllers";
 import { Controller } from "@/adapters/controllers/common";
 import { HttpResponse } from "@/adapters/presenters";
-import { Request, Response } from "express";
 
-export class CreateUserHandler {
+import { ExpressHandler } from "@/infra/express/handlers/common";
+
+export class CreateUserHandler implements ExpressHandler {
 	constructor(
 		private controller: Controller<
 			CreateUserRequestDTO,

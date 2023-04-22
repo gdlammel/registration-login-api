@@ -3,8 +3,9 @@ import { Request, Response } from "express";
 import { ResetPasswordRequestDTO } from "@/adapters/controllers";
 import { Controller } from "@/adapters/controllers/common";
 import { HttpResponse } from "@/adapters/presenters";
+import { ExpressHandler } from "@/infra/express/handlers/common";
 
-export class ResetPasswordHandler {
+export class ResetPasswordHandler implements ExpressHandler {
 	constructor(
 		private controller: Controller<
 			ResetPasswordRequestDTO,
