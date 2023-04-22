@@ -1,10 +1,5 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 
-import {
-	CreateUserControllerFactory,
-	ForgotPasswordControllerFactory,
-	ResetPasswordControllerFactory,
-} from "@/infra/factories";
 import {
 	validateCreateUserInput,
 	validateResetPasswordInput,
@@ -13,13 +8,10 @@ import {
 import { EnsureAuthenticationMiddleware } from "@/infra/middlewares/authentication";
 import { env } from "@/infra/env";
 import {
-	CreateUserRequestDTO,
-	ForgotPasswordRequestDTO,
-	ResetPasswordRequestDTO,
-} from "@/adapters/controllers";
-import { CreateUserHandler } from "@/infra/express/handlers/create-user";
-import { ForgotPasswordHandler } from "../handlers/forgot-password";
-import { ResetPasswordHandler } from "../handlers/reset-password";
+	CreateUserExpressHandlerFactory,
+	ForgotPasswordExpressHandlerFactory,
+	ResetPasswordExpressHandlerFactory,
+} from "@/infra/factories/express-handlers";
 
 const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 	env.forgotPasswordSecret
@@ -27,37 +19,34 @@ const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 
 const userRoutes = Router();
 
-const createUserControllerFactory = new CreateUserControllerFactory();
-const resetPasswordControllerFactory = new ResetPasswordControllerFactory();
-const forgotPasswordControllerFactory = new ForgotPasswordControllerFactory();
+const createUserExpressHandlerFactory = new CreateUserExpressHandlerFactory();
+const resetPasswordExpressHandlerFactory =
+	new ResetPasswordExpressHandlerFactory();
+const forgotPasswordExpressHandlerFactory =
+	new ForgotPasswordExpressHandlerFactory();
 
-const createUserController = createUserControllerFactory.create();
-const resetPasswordController = resetPasswordControllerFactory.create();
-const forgotPasswordController = forgotPasswordControllerFactory.create();
-
-const createUserHandler = new CreateUserHandler(createUserController);
-const forgotPasswordHandler = new ForgotPasswordHandler(
-	forgotPasswordController
-);
-const resetPasswordHandler = new ResetPasswordHandler(resetPasswordController);
+const createUserExpressHandler = createUserExpressHandlerFactory.create();
+const resetPasswordExpressHandler = resetPasswordExpressHandlerFactory.create();
+const forgotPasswordExpressHandler =
+	forgotPasswordExpressHandlerFactory.create();
 
 userRoutes.post(
 	"/",
 	validateCreateUserInput.validate,
-	createUserHandler.handle.bind(createUserHandler)
+	createUserExpressHandler.handle
 );
 
 userRoutes.post(
 	"/forgot-password",
 	validateForgotPasswordInput.validate,
-	forgotPasswordHandler.handle.bind(forgotPasswordHandler)
+	forgotPasswordExpressHandler.handle
 );
 
 userRoutes.patch(
 	"/reset-password",
 	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
 	validateResetPasswordInput.validate,
-	resetPasswordHandler.handle.bind(resetPasswordHandler)
+	resetPasswordExpressHandler.handle
 );
 
 export { userRoutes };
