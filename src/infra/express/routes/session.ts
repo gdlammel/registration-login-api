@@ -14,7 +14,7 @@ const authenticateUserExpressHandler =
 sessionRoutes.post(
 	"/login",
 	validateAuthenticateUserInput.validate,
-	authenticateUserExpressHandler.handle
+	authenticateUserExpressHandler.handle.bind(authenticateUserExpressHandler)
 );
 
 export { sessionRoutes };

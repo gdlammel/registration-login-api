@@ -33,20 +33,20 @@ const forgotPasswordExpressHandler =
 userRoutes.post(
 	"/",
 	validateCreateUserInput.validate,
-	createUserExpressHandler.handle
+	createUserExpressHandler.handle.bind(createUserExpressHandler)
 );
 
 userRoutes.post(
 	"/forgot-password",
 	validateForgotPasswordInput.validate,
-	forgotPasswordExpressHandler.handle
+	forgotPasswordExpressHandler.handle.bind(forgotPasswordExpressHandler)
 );
 
 userRoutes.patch(
 	"/reset-password",
 	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
 	validateResetPasswordInput.validate,
-	resetPasswordExpressHandler.handle
+	resetPasswordExpressHandler.handle.bind(resetPasswordExpressHandler)
 );
 
 export { userRoutes };
