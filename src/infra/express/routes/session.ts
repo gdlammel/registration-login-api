@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { validateAuthenticateUserInput } from "@/infra/middlewares/validators";
-import { AuthenticateUserExpressHandlerFactory } from "@/infra/factories/express-handlers";
+import { AuthenticateUserExpressHandlerFactory } from "@/infra/express/factories/express-handlers";
 
 const sessionRoutes = Router();
 

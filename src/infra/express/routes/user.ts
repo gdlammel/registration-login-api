@@ -11,7 +11,7 @@ import {
 	CreateUserExpressHandlerFactory,
 	ForgotPasswordExpressHandlerFactory,
 	ResetPasswordExpressHandlerFactory,
-} from "@/infra/factories/express-handlers";
+} from "@/infra/express/factories/express-handlers";
 
 const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 	env.forgotPasswordSecret

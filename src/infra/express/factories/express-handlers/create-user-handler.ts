@@ -1,5 +1,5 @@
 import { ExpressHandler } from "@/infra/express/handlers/common";
-import { ExpressHandlerFactory } from "@/infra/factories/express-handlers/common";
+import { ExpressHandlerFactory } from "@/infra/express/factories/express-handlers/common";
 import { CreateUserControllerFactory } from "@/infra/factories/controllers";
 import { CreateUserExpressHandler } from "@/infra/express/handlers";
 
