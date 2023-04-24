@@ -12,8 +12,7 @@ export class EnsureAuthenticationMiddleware {
 	public verify(request: Request, response: Response, next: NextFunction) {
 		const authToken = request.headers.authorization;
 		if (!authToken) {
-			const responseData =
-				HttpPresenter.unauthorized("Invalid Token");
+			const responseData = HttpPresenter.unauthorized("Invalid Token");
 			return response.status(responseData.statusCode).json(responseData);
 		}
 
@@ -25,8 +24,7 @@ export class EnsureAuthenticationMiddleware {
 			request.body = body;
 			return next();
 		} catch (error) {
-			const responseData =
-				HttpPresenter.unauthorized("Unauthorized");
+			const responseData = HttpPresenter.unauthorized("Unauthorized");
 			return response.status(responseData.statusCode).json(responseData);
 		}
 	}
