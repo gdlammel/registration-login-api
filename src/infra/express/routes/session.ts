@@ -3,18 +3,27 @@ import { Router } from "express";
 import { validateAuthenticateUserInput } from "@/infra/middlewares/validators";
 import { AuthenticateUserExpressHandlerFactory } from "@/infra/express/factories/express-handlers";
 
-const sessionRoutes = Router();
+class SessionRouter {
+	private router: Router = Router();
 
-const authenticateUserExpressHandlerFactory =
-	new AuthenticateUserExpressHandlerFactory();
+	constructor(
+		private authenticateUserHandlerFactory: AuthenticateUserExpressHandlerFactory
+	) {}
 
-const authenticateUserExpressHandler =
-	authenticateUserExpressHandlerFactory.create();
+	public configureRoutes() {
+		this.router.post(
+			"/login",
+			validateAuthenticateUserInput.validate,
+			this.authenticateUserHandler
+		);
+		return this.router;
+	}
 
-sessionRoutes.post(
-	"/login",
-	validateAuthenticateUserInput.validate,
-	authenticateUserExpressHandler.handle.bind(authenticateUserExpressHandler)
-);
+	private authenticateUserHandler() {
+		return this.authenticateUserHandlerFactory
+			.create()
+			.handle.bind(this.authenticateUserHandlerFactory.create());
+	}
+}
 
-export { sessionRoutes };
+export { SessionRouter };

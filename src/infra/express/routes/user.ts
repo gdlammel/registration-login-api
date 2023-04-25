@@ -1,52 +1,73 @@
 import { Router } from "express";
 
 import {
+	CreateUserExpressHandlerFactory,
+	ForgotPasswordExpressHandlerFactory,
+	ResetPasswordExpressHandlerFactory,
+} from "@/infra/express/factories/express-handlers";
+import {
 	validateCreateUserInput,
 	validateResetPasswordInput,
 	validateForgotPasswordInput,
 } from "@/infra/middlewares/validators";
 import { EnsureAuthenticationMiddleware } from "@/infra/middlewares/authentication";
 import { env } from "@/infra/env";
-import {
-	CreateUserExpressHandlerFactory,
-	ForgotPasswordExpressHandlerFactory,
-	ResetPasswordExpressHandlerFactory,
-} from "@/infra/express/factories/express-handlers";
 
 const forgotPasswordAuthentication = new EnsureAuthenticationMiddleware(
 	env.forgotPasswordSecret
 );
 
-const userRoutes = Router();
+class UserRouter {
+	private router: Router = Router();
 
-const createUserExpressHandlerFactory = new CreateUserExpressHandlerFactory();
-const resetPasswordExpressHandlerFactory =
-	new ResetPasswordExpressHandlerFactory();
-const forgotPasswordExpressHandlerFactory =
-	new ForgotPasswordExpressHandlerFactory();
+	constructor(
+		private createUserHandlerFactory: CreateUserExpressHandlerFactory,
+		private forgotPasswordHandlerFactory: ForgotPasswordExpressHandlerFactory,
+		private resetPasswordHandlerFactory: ResetPasswordExpressHandlerFactory
+	) {}
 
-const createUserExpressHandler = createUserExpressHandlerFactory.create();
-const resetPasswordExpressHandler = resetPasswordExpressHandlerFactory.create();
-const forgotPasswordExpressHandler =
-	forgotPasswordExpressHandlerFactory.create();
+	public configureRoutes(): Router {
+		this.router.post(
+			"/",
+			validateCreateUserInput.validate,
+			this.createUserHandler()
+		);
 
-userRoutes.post(
-	"/",
-	validateCreateUserInput.validate,
-	createUserExpressHandler.handle.bind(createUserExpressHandler)
-);
+		this.router.post(
+			"/forgot-password",
+			validateForgotPasswordInput.validate,
+			this.forgotPasswordHandler()
+		);
 
-userRoutes.post(
-	"/forgot-password",
-	validateForgotPasswordInput.validate,
-	forgotPasswordExpressHandler.handle.bind(forgotPasswordExpressHandler)
-);
+		this.router.patch(
+			"/reset-password",
+			forgotPasswordAuthentication.verify.bind(
+				forgotPasswordAuthentication
+			),
+			validateResetPasswordInput.validate,
+			this.resetPasswordHandler()
+		);
 
-userRoutes.patch(
-	"/reset-password",
-	forgotPasswordAuthentication.verify.bind(forgotPasswordAuthentication),
-	validateResetPasswordInput.validate,
-	resetPasswordExpressHandler.handle.bind(resetPasswordExpressHandler)
-);
+		return this.router;
+	}
 
-export { userRoutes };
+	private createUserHandler() {
+		return this.createUserHandlerFactory
+			.create()
+			.handle.bind(this.createUserHandlerFactory.create());
+	}
+
+	private forgotPasswordHandler() {
+		return this.forgotPasswordHandlerFactory
+			.create()
+			.handle.bind(this.forgotPasswordHandlerFactory.create());
+	}
+
+	private resetPasswordHandler() {
+		return this.resetPasswordHandlerFactory
+			.create()
+			.handle.bind(this.resetPasswordHandlerFactory.create());
+	}
+}
+
+export { UserRouter };
