@@ -44,8 +44,7 @@ export class validateCreateUserInput {
 					.status(responseData.statusCode)
 					.json(responseData);
 			}
-			const responseData =
-				HttpPresenter.internalError("Internal error");
+			const responseData = HttpPresenter.internalError("Internal error");
 			return response.status(responseData.statusCode).json(responseData);
 		}
 	}
