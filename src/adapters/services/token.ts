@@ -1,3 +1,3 @@
 export interface ITokenService {
-	generateToken(data: Object, secret?: string): string;
+	generateToken(data: object, secret?: string, expiresIn?: string): string;
 }

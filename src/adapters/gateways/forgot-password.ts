@@ -12,8 +12,8 @@ export class ForgotPasswordGateway implements IForgotPasswordGateway {
 	async findUserByEmail(email: string): Promise<User | null> {
 		return this.userRepository.findUserByEmail(email);
 	}
-	generateToken(data: Object, secret?: string | undefined): string {
-		return this.tokenService.generateToken(data, secret);
+	generateToken(data: object, secret?: string, expiresIn?: string): string {
+		return this.tokenService.generateToken(data, secret, expiresIn);
 	}
 	async sendEmail(user: User, token: string): Promise<boolean> {
 		return this.emailService.sendEmail(user, token);
