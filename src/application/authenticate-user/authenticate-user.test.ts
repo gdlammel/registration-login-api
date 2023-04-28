@@ -18,6 +18,7 @@ describe("Authenticate user use case", () => {
 			password: "123",
 			email: "teste@teste.com",
 			phoneNumber: 1112345678,
+			totpSecret: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 		};
 		const userRegistered = User.create(userRegisteredInfos) as User;
 
