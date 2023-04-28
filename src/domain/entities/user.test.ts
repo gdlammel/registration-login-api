@@ -9,7 +9,7 @@ describe("Create user entity", () => {
 			password: "123",
 			email: "teste@gmail.com",
 			phoneNumber: 12345678,
-		};
+		} as IUserProps;
 		expect(User.create(user)).toBeInstanceOf(User);
 	});
 
@@ -20,7 +20,7 @@ describe("Create user entity", () => {
 			password: "123",
 			email: "fewuhwhweu",
 			phoneNumber: 12345678,
-		};
+		} as IUserProps;
 
 		expect(User.create(user)).toBeInstanceOf(UserDomainError);
 	});
@@ -32,7 +32,7 @@ describe("Create user entity", () => {
 			password: "123",
 			email: "teste@gmail.com",
 			phoneNumber: 54385,
-		};
+		} as IUserProps;
 
 		expect(User.create(user)).toBeInstanceOf(UserDomainError);
 	});
