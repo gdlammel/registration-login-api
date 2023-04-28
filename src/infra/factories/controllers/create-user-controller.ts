@@ -4,7 +4,11 @@ import {
 	CreateUserController,
 	CreateUserRequestDTO,
 } from "@/adapters/controllers";
-import { BcryptHashService, UuidIdService } from "@/infra/services";
+import {
+	BcryptHashService,
+	OtpLibTotpService,
+	UuidIdService,
+} from "@/infra/services";
 import { PrismaUserRepository } from "@/infra/repositories/prisma";
 import { ControllerFactory } from "@/infra/factories/controllers/common";
 import { Controller } from "@/adapters/controllers/common";
@@ -14,10 +18,12 @@ export class CreateUserControllerFactory implements ControllerFactory {
 		const userRepository = new PrismaUserRepository();
 		const IdService = new UuidIdService();
 		const hashService = new BcryptHashService();
+		const totpService = new OtpLibTotpService();
 		const createUserGateway = new CreateUserGateway(
 			userRepository,
 			IdService,
-			hashService
+			hashService,
+			totpService
 		);
 		const createUserInteractor = new CreateUserInteractor(
 			createUserGateway
