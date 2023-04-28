@@ -1,11 +1,8 @@
 import { UseCase } from "@/application/common";
 import { UnmatchPasswordError } from "@/application/authenticate-user/errors";
-import {
-	InternalError,
-	UserNotFoundError,
-} from "@/application/common/errors";
-import {IAuthenticateUserGateway} from "@/application/authenticate-user";
-
+import { InternalError, UserNotFoundError } from "@/application/common/errors";
+import { IAuthenticateUserGateway } from "@/application/authenticate-user";
+import { env } from "@/infra/env";
 export interface AuthUserInputDTO {
 	password: string;
 	email: string;
@@ -18,19 +15,11 @@ export class AuthenticateUserInteractor
 			Promise<string | UserNotFoundError | UnmatchPasswordError>
 		>
 {
-	constructor(
-		private gateway: IAuthenticateUserGateway
-	) {}
+	constructor(private gateway: IAuthenticateUserGateway) {}
 
-	async execute(
-		data: AuthUserInputDTO
-	): Promise<
-		string | UserNotFoundError | UnmatchPasswordError | InternalError
-	> {
+	async execute(data: AuthUserInputDTO) {
 		try {
-			const userExists = await this.gateway.findUserByEmail(
-				data.email
-			);
+			const userExists = await this.gateway.findUserByEmail(data.email);
 			if (!userExists) {
 				return new UserNotFoundError();
 			}
@@ -42,7 +31,11 @@ export class AuthenticateUserInteractor
 			if (!isPasswordMatch) {
 				return new UnmatchPasswordError();
 			}
-			const token = this.gateway.generateToken(userExists);
+			const token = this.gateway.generateToken(
+				userExists,
+				env.jwt2FaSecret,
+				env.jwt2FaExpiresIn
+			);
 
 			return token;
 		} catch (error) {
