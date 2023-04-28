@@ -2,7 +2,7 @@ import { UseCase } from "@/application/common";
 import { UserDomainError, User } from "@/domain/entities";
 import { EmailAlreadyRegisteredError } from "@/application/create-user/errors";
 import { InternalError } from "@/application/common/errors";
-import {ICreateUserGateway} from "@/application/create-user/create-user-gateway";
+import { ICreateUserGateway } from "@/application/create-user/create-user-gateway";
 
 export interface CreateUserInputDTO {
 	name: string;
@@ -16,31 +16,25 @@ export class CreateUserInteractor
 		UseCase<
 			CreateUserInputDTO,
 			Promise<
-				| boolean
+				| string
 				| EmailAlreadyRegisteredError
 				| UserDomainError
 				| InternalError
 			>
 		>
 {
-	constructor(
-		private gateway: ICreateUserGateway
-	) {}
-	async execute(
-		data: CreateUserInputDTO
-	): Promise<
-		boolean | EmailAlreadyRegisteredError | UserDomainError | InternalError
-	> {
+	constructor(private gateway: ICreateUserGateway) {}
+	async execute(data: CreateUserInputDTO) {
 		try {
-			const emailAlreadyRegistered = await this.gateway.findUserByEmail(data.email);
+			const emailAlreadyRegistered = await this.gateway.findUserByEmail(
+				data.email
+			);
 			if (emailAlreadyRegistered) {
 				return new EmailAlreadyRegisteredError();
 			}
 
 			const id = this.gateway.generateId();
-			const encryptedPassword = await this.gateway.hash(
-				data.password
-			);
+			const encryptedPassword = await this.gateway.hash(data.password);
 
 			const createdUserOrError = User.create({
 				id,
@@ -52,9 +46,13 @@ export class CreateUserInteractor
 			if (createdUserOrError instanceof Error) {
 				return new UserDomainError();
 			}
-
-			return await this.gateway.save(createdUserOrError);
+			await this.gateway.save(createdUserOrError);
+			return this.gateway.generateTotpSeed(
+				createdUserOrError.name,
+				createdUserOrError.totpSecret
+			);
 		} catch (error) {
+			console.log(error);
 			return new InternalError();
 		}
 	}
