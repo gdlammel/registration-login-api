@@ -7,6 +7,7 @@ import {
 	ForgotPasswordExpressHandlerFactory,
 	ResetPasswordExpressHandlerFactory,
 	AuthenticateUserExpressHandlerFactory,
+	VerifyTotpExpressHandlerFactory,
 } from "@/infra/express/factories/express-handlers";
 
 class ExpressApp {
@@ -28,6 +29,7 @@ class ExpressApp {
 				new ResetPasswordExpressHandlerFactory(),
 			authenticateUserHandlerFactory:
 				new AuthenticateUserExpressHandlerFactory(),
+			verifyTotpHandlerFactory: new VerifyTotpExpressHandlerFactory(),
 		};
 	}
 
@@ -37,13 +39,15 @@ class ExpressApp {
 			forgotPasswordHandlerFactory,
 			resetPasswordHandlerFactory,
 			authenticateUserHandlerFactory,
+			verifyTotpHandlerFactory,
 		} = this.initializeFactories();
 
 		return new AppRouter(
 			createUserHandlerFactory,
 			forgotPasswordHandlerFactory,
 			resetPasswordHandlerFactory,
-			authenticateUserHandlerFactory
+			authenticateUserHandlerFactory,
+			verifyTotpHandlerFactory
 		);
 	}
 	private configureMiddlewares() {

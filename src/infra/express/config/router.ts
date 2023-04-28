@@ -1,13 +1,13 @@
 import { Router } from "express";
 
-import { UserRouter } from "@/infra/express/routes";
-import { SessionRouter } from "@/infra/express/routes";
+import { UserRouter, AuthRouter } from "@/infra/express/routes";
 
 import {
 	AuthenticateUserExpressHandlerFactory,
 	CreateUserExpressHandlerFactory,
 	ForgotPasswordExpressHandlerFactory,
 	ResetPasswordExpressHandlerFactory,
+	VerifyTotpExpressHandlerFactory,
 } from "@/infra/express/factories/express-handlers";
 
 class AppRouter {
@@ -17,7 +17,8 @@ class AppRouter {
 		private createUserHandlerFactory: CreateUserExpressHandlerFactory,
 		private forgotPasswordHandlerFactory: ForgotPasswordExpressHandlerFactory,
 		private resetPasswordHandlerFactory: ResetPasswordExpressHandlerFactory,
-		private authenticateUserHandlerFactory: AuthenticateUserExpressHandlerFactory
+		private authenticateUserHandlerFactory: AuthenticateUserExpressHandlerFactory,
+		private verifyTotpHandlerFactory: VerifyTotpExpressHandlerFactory
 	) {}
 
 	public configureRoutes(): Router {
@@ -27,12 +28,13 @@ class AppRouter {
 			this.resetPasswordHandlerFactory
 		);
 
-		const sessionRouter = new SessionRouter(
-			this.authenticateUserHandlerFactory
+		const authRouter = new AuthRouter(
+			this.authenticateUserHandlerFactory,
+			this.verifyTotpHandlerFactory
 		);
 
 		this.router.use("/users", userRouter.configureRoutes());
-		this.router.use("/session", sessionRouter.configureRoutes());
+		this.router.use("/auth", authRouter.configureRoutes());
 		return this.router;
 	}
 }
