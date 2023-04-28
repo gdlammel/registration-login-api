@@ -5,6 +5,7 @@ import { CreateUserGateway } from "@/adapters/gateways";
 import {
 	InMemoryIdService,
 	InMemoryHashService,
+	InMemoryTotpService,
 } from "@/infra/services/in-memory";
 import {
 	CreateUserInteractor,
@@ -22,10 +23,12 @@ describe("Create user use case", () => {
 		);
 		const idService = new InMemoryIdService();
 		const hashService = new InMemoryHashService();
+		const totpService = new InMemoryTotpService();
 		const gateway = new CreateUserGateway(
 			repository,
 			idService,
-			hashService
+			hashService,
+			totpService
 		);
 		return [new CreateUserInteractor(gateway), repository];
 	}
@@ -49,6 +52,7 @@ describe("Create user use case", () => {
 			password: "123",
 			email: "teste@gmail.com",
 			phoneNumber: 1112345678,
+			totpSecret: "abcabc",
 		};
 
 		const userRegistered = User.create(userRegisteredInfos);
