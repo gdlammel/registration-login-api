@@ -12,16 +12,12 @@ export class ResetPasswordExpressHandler implements ExpressHandler {
 			HttpResponse<string>
 		>
 	) {}
-	async handle() {
-		async (request: Request, response: Response) => {
-			const { id, newPassword }: ResetPasswordRequestDTO = request.body;
-			const httpResponse = await this.controller.handle({
-				id,
-				newPassword,
-			});
-			return response
-				.status(httpResponse.statusCode)
-				.json(httpResponse.data);
-		};
+	async handle(request: Request, response: Response) {
+		const { id, newPassword }: ResetPasswordRequestDTO = request.body;
+		const httpResponse = await this.controller.handle({
+			id,
+			newPassword,
+		});
+		return response.status(httpResponse.statusCode).json(httpResponse.data);
 	}
 }
