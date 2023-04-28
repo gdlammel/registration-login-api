@@ -6,6 +6,7 @@ export interface userTable {
 	password: string;
 	email: string;
 	phone_number: bigint;
+	totp_secret: string;
 	created_at: Date;
 	updated_at: Date;
 }
@@ -17,6 +18,7 @@ export class UserMapper {
 			name: user.name,
 			password: user.password,
 			email: user.email,
+			totpSecret: user.totp_secret,
 			phoneNumber: Number(user.phone_number),
 		});
 
@@ -32,6 +34,7 @@ export class UserMapper {
 			password: user.password,
 			email: user.email,
 			phone_number: BigInt(user.phoneNumber),
+			totp_secret: user.totpSecret,
 			created_at: new Date(),
 			updated_at: new Date(),
 		};
