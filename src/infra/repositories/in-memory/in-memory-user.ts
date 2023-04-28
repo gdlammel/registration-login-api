@@ -9,7 +9,7 @@ export class InMemoryUserRepository implements IUserRepository {
 		this.users = users;
 		this.timeSaveCalled = 0;
 	}
-	async save(user: User): Promise<boolean> {
+	async save(): Promise<boolean> {
 		this.timeSaveCalled++;
 		return true;
 	}
@@ -28,9 +28,6 @@ export class InMemoryUserRepository implements IUserRepository {
 		return foundIdUser;
 	}
 	async updatePassword(user: User, newPassword: string): Promise<boolean> {
-		const foundUser = this.users.find(
-			(systemUser) => systemUser.id === user.id
-		);
 		const updatedUser = User.create({
 			id: user.id,
 			name: user.name,
