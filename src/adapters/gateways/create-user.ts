@@ -1,5 +1,5 @@
 import { IUserRepository } from "@/adapters/repositories";
-import { IHashService, IIdService } from "@/adapters/services";
+import { IHashService, IIdService, ITotpService } from "@/adapters/services";
 import { User } from "@/domain/entities";
 import { ICreateUserGateway } from "@/application/create-user";
 
@@ -7,7 +7,8 @@ export class CreateUserGateway implements ICreateUserGateway {
 	constructor(
 		private userRepository: IUserRepository,
 		private idService: IIdService,
-		private hashService: IHashService
+		private hashService: IHashService,
+		private totpService: ITotpService
 	) {}
 	async findUserByEmail(email: string): Promise<User | null> {
 		return this.userRepository.findUserByEmail(email);
@@ -20,5 +21,8 @@ export class CreateUserGateway implements ICreateUserGateway {
 	}
 	generateId(): string {
 		return this.idService.generateId();
+	}
+	generateTotpSeed(name: string, secret: string): string {
+		return this.totpService.generateTotpSeed(name, secret);
 	}
 }
