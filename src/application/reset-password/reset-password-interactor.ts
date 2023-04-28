@@ -1,8 +1,6 @@
 import { UseCase } from "@/application/common";
-import {
-	MissingInformationError,
-	ResetPasswordError,
-} from "@/application/reset-password/errors";
+import { MissingInformationError } from "@/application/reset-password/errors";
+import { ResetPasswordError } from "@/application/reset-password/errors";
 import { User, UserDomainError } from "@/domain/entities";
 import { InternalError, UserNotFoundError } from "@/application/common/errors";
 import { IResetPasswordGateway } from "@/application/reset-password";
@@ -36,9 +34,7 @@ export class ResetPasswordInteractor
 			if (!userExists) {
 				return new UserNotFoundError();
 			}
-			const hashedPassword = await this.gateway.hash(
-				newPassword
-			);
+			const hashedPassword = await this.gateway.hash(newPassword);
 
 			const user = User.create({
 				id: userExists.id,
