@@ -1,9 +1,21 @@
+import crypto from "node:crypto";
+
 export interface IUserProps {
 	id: string;
 	name: string;
 	password: string;
 	email: string;
 	phoneNumber: number;
+	totpSecret: string;
+}
+
+export interface ICreateUserProps {
+	id: string;
+	name: string;
+	password: string;
+	email: string;
+	phoneNumber: number;
+	totpSecret?: string;
 }
 
 export class UserDomainError extends Error {
@@ -34,17 +46,34 @@ export class User {
 		return this.props.phoneNumber;
 	}
 
+	get totpSecret() {
+		return this.props.totpSecret;
+	}
+
 	private constructor({
 		id,
 		name,
 		password,
 		email,
 		phoneNumber,
+		totpSecret,
 	}: IUserProps) {
-		this.props = { id, name, password, email, phoneNumber };
+		this.props = { id, name, password, email, phoneNumber, totpSecret };
 	}
 
-	public static create(userProps: IUserProps): User | UserDomainError {
+	private static generateRandomTotpSecret(length = 16) {
+		const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+		let secret = "";
+
+		for (let i = 0; i < length; i++) {
+			const randomIndex = crypto.randomInt(0, chars.length);
+			secret += chars[randomIndex];
+		}
+
+		return secret;
+	}
+
+	public static create(userProps: ICreateUserProps): User | UserDomainError {
 		const isPhoneNumberValidated = User.validatePhoneNumber(
 			String(userProps.phoneNumber)
 		);
@@ -52,7 +81,18 @@ export class User {
 		if (!isPhoneNumberValidated || !isEmailValidated) {
 			return new UserDomainError();
 		}
-		return new User(userProps);
+		if (!userProps.totpSecret) {
+			const totpSecret = this.generateRandomTotpSecret();
+			return new User({ ...userProps, totpSecret });
+		}
+		return new User({
+			id: userProps.id,
+			name: userProps.name,
+			password: userProps.password,
+			email: userProps.email,
+			phoneNumber: userProps.phoneNumber,
+			totpSecret: userProps.totpSecret,
+		});
 	}
 
 	private static validatePhoneNumber(phoneNumber: string) {
@@ -63,7 +103,7 @@ export class User {
 	}
 
 	private static validateEmail(email: string) {
-		const regexExpression = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		const regexExpression = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 		const validate = regexExpression.test(email);
 		return validate;
 	}
