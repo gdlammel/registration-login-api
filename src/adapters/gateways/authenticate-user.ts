@@ -18,7 +18,7 @@ export class AuthenticateUserGateway implements IAuthenticateUserGateway {
 	): Promise<boolean> {
 		return this.hashService.compare(inputPassword, userPassword);
 	}
-	generateToken(data: Object, secret?: string): string {
-		return this.tokenService.generateToken(data, secret);
+	generateToken(data: object, secret?: string, expiresIn?: string): string {
+		return this.tokenService.generateToken(data, secret, expiresIn);
 	}
 }
