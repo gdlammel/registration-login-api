@@ -1,7 +1,7 @@
 import { ITokenService } from "@/adapters/services";
 
 export class InMemoryTokenService implements ITokenService {
-	generateToken(data: Object): string {
+	generateToken(): string {
 		return "abcabc";
 	}
 }
