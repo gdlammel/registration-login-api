@@ -1,5 +1,4 @@
 import { UseCase } from "@/application/common";
-import { User, UserDomainError } from "@/domain/entities";
 import { EmailNotFoundError } from "@/application/forgot-password/errors";
 import { InternalError } from "@/application/common/errors";
 import { IForgotPasswordGateway } from "@/application/forgot-password";
@@ -13,29 +12,19 @@ export class ForgotPasswordInteractor
 	implements UseCase<ForgotPasswordInputDTO, boolean | EmailNotFoundError>
 {
 	constructor(private gateway: IForgotPasswordGateway) {}
-	async execute({
-		email,
-	}: ForgotPasswordInputDTO): Promise<
-		boolean | EmailNotFoundError | InternalError
-	> {
+	async execute({ email }: ForgotPasswordInputDTO) {
 		try {
 			const emailExists = await this.gateway.findUserByEmail(email);
 			if (!emailExists) {
 				return new EmailNotFoundError();
 			}
-			const createdUserOrError = User.create(emailExists);
-			if (createdUserOrError instanceof Error) {
-				return new UserDomainError();
-			}
 
 			const token = this.gateway.generateToken(
-				createdUserOrError,
-				env.forgotPasswordSecret
+				emailExists,
+				env.forgotPasswordSecret,
+				env.forgotPasswordExpiresIn
 			);
-			const result = await this.gateway.sendEmail(
-				createdUserOrError,
-				token
-			);
+			const result = await this.gateway.sendEmail(emailExists, token);
 			return result;
 		} catch (error) {
 			return new InternalError();
